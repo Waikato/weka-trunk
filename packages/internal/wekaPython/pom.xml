@@ -5,7 +5,7 @@
 
   <groupId>nz.ac.waikato.cms.weka</groupId>
   <artifactId>wekaPython</artifactId>
-  <version>1.0.10-SNAPSHOT</version>
+  <version>1.0.10</version>
   <packaging>jar</packaging>
 
   <name>wekaPython</name>
@@ -48,9 +48,9 @@ Integration with CPython for Weka. Python version 2.7.x or higher is required. A
   </parent>
 
   <scm>
-    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/internal/wekaPython</connection>
-    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/internal/wekaPython</developerConnection>
-    <url>https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/internal/wekaPython</url>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/tags/wekaPython-1.0.10</connection>
+    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/tags/wekaPython-1.0.10</developerConnection>
+    <url>https://svn.cms.waikato.ac.nz/svn/weka/tags/wekaPython-1.0.10</url>
   </scm>
 
   <profiles>
