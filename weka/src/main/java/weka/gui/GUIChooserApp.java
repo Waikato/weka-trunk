@@ -1043,7 +1043,7 @@ public class GUIChooserApp extends JFrame {
     jMenuItemHelpHomepage.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        BrowserHelper.openURL("http://www.cs.waikato.ac.nz/~ml/weka/");
+        BrowserHelper.openURL("https://www.cs.waikato.ac.nz/~ml/weka/");
       }
     });
 
@@ -1060,7 +1060,7 @@ public class GUIChooserApp extends JFrame {
     jMenuItemHelpWekaWiki.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        BrowserHelper.openURL("http://weka.wikispaces.com/");
+        BrowserHelper.openURL("https://waikato.github.io/weka-wiki/");
       }
     });
 
@@ -1075,7 +1075,7 @@ public class GUIChooserApp extends JFrame {
     jMenuItemHelpSourceforge.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        BrowserHelper.openURL("http://sourceforge.net/projects/weka/");
+        BrowserHelper.openURL("https://sourceforge.net/projects/weka/");
       }
     });
 
