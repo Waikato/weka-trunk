@@ -35,7 +35,7 @@ PackageURL=http://prdownloads.sourceforge.net/weka/wekaServer1.1.9.zip?download
 URL=http://wiki.pentaho.com/display/DATAMINING/Weka+Server
 
 # Changes in this release
-Changes=Explorer-based tasks now work correctly for schemes from packages.
+Changes=Small changes to be compatible with changes to ClassifierPanel.
 
 # Enhances various other packages ?
 # Enhances=packageName1,packageName2,...
