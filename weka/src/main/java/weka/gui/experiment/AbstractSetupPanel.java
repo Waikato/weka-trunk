@@ -139,4 +139,10 @@ public abstract class AbstractSetupPanel
 
     return result.toArray(new AbstractSetupPanel[result.size()]);
   }
+
+  /**
+   * Terminates this panel, which means, in the case of this panel, that it sets all references
+   * to associated JFrame objects to null.
+   */
+  public abstract void terminate();
 }

@@ -576,6 +576,15 @@ public class SimpleSetupPanel
   }
 
   /**
+   * Terminates this panel, which means, in the case of this panel, that it sets all references
+   * to associated JFrame objects to null.
+   */
+   public void terminate() {
+       m_NotesFrame.dispose();
+       m_NotesFrame = null;
+   }
+
+  /**
    * Returns the name of the panel.
    *
    * @return		the name

@@ -66,6 +66,18 @@ public class LogPanel extends JPanel implements Logger, TaskLogger {
   protected WekaTaskMonitor m_TaskMonitor = null;
 
   /**
+   * A trivial wrapper for a JFrame so that we can facilitate garbage collection.
+   */
+  protected class JFrameWrapper {
+
+    // The reference to the actual JFrame
+    protected JFrame m_Frame;
+  }
+
+  /** The JFrameWrapper to use. We need to have it as a global member variable. */
+  protected JFrameWrapper m_FrameWrapper;
+
+  /**
    * Creates the log panel with no task monitor and the log always visible.
    */
   public LogPanel() {
@@ -136,26 +148,27 @@ public class LogPanel extends JPanel implements Logger, TaskLogger {
     if (logHidden) {
 
       // create log window
-      final JFrame jf = Utils.getWekaJFrame("Log", this);
-      jf.addWindowListener(new WindowAdapter() {
+      m_FrameWrapper = new JFrameWrapper();
+      m_FrameWrapper.m_Frame = Utils.getWekaJFrame("Log", this);
+      m_FrameWrapper.m_Frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          jf.setVisible(false);
+          m_FrameWrapper.m_Frame.setVisible(false);
         }
       });
-      jf.getContentPane().setLayout(new BorderLayout());
-      jf.getContentPane().add(js, BorderLayout.CENTER);
-      jf.pack();
-      jf.setSize(800, 600);
+      m_FrameWrapper.m_Frame.getContentPane().setLayout(new BorderLayout());
+      m_FrameWrapper.m_Frame.getContentPane().add(js, BorderLayout.CENTER);
+      m_FrameWrapper.m_Frame.pack();
+      m_FrameWrapper.m_Frame.setSize(800, 600);
 
       // display log window on request
       m_logButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Window windowAncestor = SwingUtilities.getWindowAncestor(LogPanel.this);
           if (windowAncestor instanceof Frame) {
-            jf.setIconImage(((Frame) windowAncestor).getIconImage());
+            m_FrameWrapper.m_Frame.setIconImage(((Frame) windowAncestor).getIconImage());
           }
-          jf.setLocationRelativeTo(LogPanel.this);
-          jf.setVisible(true);
+          m_FrameWrapper.m_Frame.setLocationRelativeTo(LogPanel.this);
+          m_FrameWrapper.m_Frame.setVisible(true);
         }
       });
 
@@ -207,7 +220,15 @@ public class LogPanel extends JPanel implements Logger, TaskLogger {
     }
     addPopup();
   }
+  /**
+   * Terminates this panel, which means, in the case of this panel, that it terminates the frame that it may have
+   * created.
+   */
+  public void terminate() {
 
+    m_FrameWrapper.m_Frame.dispose();
+    m_FrameWrapper.m_Frame = null;
+  }
   /**
    * Set the size of the font used in the log message area. <= 0 will use the
    * default for JTextArea.

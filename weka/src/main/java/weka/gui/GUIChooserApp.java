@@ -202,6 +202,15 @@ public class GUIChooserApp extends JFrame {
   }
 
   /**
+   * A trivial wrapper for a JFrame so that we can facilitate garbage collection.
+   */
+  protected class JFrameWrapper {
+
+    // The reference to the actual JFrame
+    protected JFrame m_Frame;
+  }
+
+  /**
    * Creates the experiment environment gui with no initial experiment
    */
   public GUIChooserApp() {
@@ -1143,25 +1152,30 @@ public class GUIChooserApp extends JFrame {
     m_ExperimenterBut.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-          final JFrame frame = Utils.getWekaJFrame("Weka Experiment Environment", m_Self);
-        frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(new Experimenter(false),
-            BorderLayout.CENTER);
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent w) {
-              frame.dispose();
-              m_Frames.remove(frame);
-              checkExit();
-            }
-          });
-        frame.pack();
-        frame.setSize(1024, 768);
-        frame.setLocationRelativeTo(m_Self);
-        frame.setVisible(true);
-        m_Frames.add(frame);
+        final JFrameWrapper frameWrapper = new JFrameWrapper();
+        frameWrapper.m_Frame = Utils.getWekaJFrame("Weka Experiment Environment", m_Self);
+        frameWrapper.m_Frame.getContentPane().setLayout(new BorderLayout());
+        final Experimenter experimenter = new Experimenter(false);
+        frameWrapper.m_Frame.getContentPane().add(experimenter,
+                BorderLayout.CENTER);
+        frameWrapper.m_Frame.addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosing(WindowEvent w) {
+            experimenter.terminate();
+            frameWrapper.m_Frame.dispose();
+            m_Frames.remove(frameWrapper.m_Frame);
+            frameWrapper.m_Frame = null;
+            checkExit();
+          }
+        });
+        frameWrapper.m_Frame.pack();
+        frameWrapper.m_Frame.setSize(1024, 768);
+        frameWrapper.m_Frame.setLocationRelativeTo(m_Self);
+        frameWrapper.m_Frame.setVisible(true);
+        m_Frames.add(frameWrapper.m_Frame);
       }
-      });
+    });
+
 
     m_KnowledgeFlowBut.addActionListener(new ActionListener() {
       @Override
@@ -1311,24 +1325,27 @@ public class GUIChooserApp extends JFrame {
   }
 
   public void showExplorer(String fileToLoad) {
-    final JFrame frame = Utils.getWekaJFrame("Weka Explorer", m_Self);
-    frame.getContentPane().setLayout(new BorderLayout());
-    Explorer expl = new Explorer();
+    final JFrameWrapper frameWrapper = new JFrameWrapper();
+    frameWrapper.m_Frame = Utils.getWekaJFrame("Weka Explorer", m_Self);
+    frameWrapper.m_Frame.getContentPane().setLayout(new BorderLayout());
+    final Explorer expl = new Explorer();
 
-    frame.getContentPane().add(expl, BorderLayout.CENTER);
-    frame.addWindowListener(new WindowAdapter() {
+    frameWrapper.m_Frame.getContentPane().add(expl, BorderLayout.CENTER);
+    frameWrapper.m_Frame.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent w) {
-        frame.dispose();
-        m_Frames.remove(frame);
+        expl.terminate();
+        frameWrapper.m_Frame.dispose();
+        m_Frames.remove(frameWrapper.m_Frame);
+        frameWrapper.m_Frame = null;
         checkExit();
       }
     });
-    frame.pack();
-    frame.setSize(1024, 768);
-    frame.setLocationRelativeTo(m_Self);
-    frame.setVisible(true);
-    m_Frames.add(frame);
+    frameWrapper.m_Frame.pack();
+    frameWrapper.m_Frame.setSize(1024, 768);
+    frameWrapper.m_Frame.setLocationRelativeTo(m_Self);
+    frameWrapper.m_Frame.setVisible(true);
+    m_Frames.add(frameWrapper.m_Frame);
 
     if (fileToLoad != null) {
       try {
