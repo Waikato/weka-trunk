@@ -1091,6 +1091,7 @@ public final class Utils implements RevisionHandler {
    */
   public static JFrame getWekaJFrame(String title, Component component) {
     JFrame jf = new JFrame(title);
+    jf.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     Window windowAncestor = null;
     if (component != null) {
       if (component instanceof Window) {

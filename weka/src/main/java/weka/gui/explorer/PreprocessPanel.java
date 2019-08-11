@@ -1170,6 +1170,8 @@ public class PreprocessPanel extends AbstractPerspective implements
                 // display output?
                 if ((generated) && (showOutput))
                   showGeneratedInstances(generatorPanel.getOutput());
+
+                generatorPanel.setLog(null);
               }
             });
             dialog.setTitle("DataGenerator");

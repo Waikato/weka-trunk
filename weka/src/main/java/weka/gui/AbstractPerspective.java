@@ -85,6 +85,15 @@ public abstract class AbstractPerspective extends JPanel implements Perspective 
   }
 
   /**
+   * No-op implementation. Subclasses should override this to free any resources (e.g., JFrames and threads) when
+   * the perspective is no longer needed.
+   */
+  public void terminate() {
+    // no-op method. Subclasses should override this when necessary to free up resources that are
+    // not otherwise released by Java.
+  }
+
+  /**
    * No-opp implementation. Subclasses should override if they can only complete
    * initialization by accessing the main application and/or the
    * PerspectiveManager. References to these two things are guaranteed to be

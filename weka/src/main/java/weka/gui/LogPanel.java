@@ -226,9 +226,12 @@ public class LogPanel extends JPanel implements Logger, TaskLogger {
    */
   public void terminate() {
 
-    m_FrameWrapper.m_Frame.dispose();
-    m_FrameWrapper.m_Frame = null;
+    if ((m_FrameWrapper != null) && (m_FrameWrapper.m_Frame != null)) {
+      m_FrameWrapper.m_Frame.dispose();
+      m_FrameWrapper.m_Frame = null;
+    }
   }
+
   /**
    * Set the size of the font used in the log message area. <= 0 will use the
    * default for JTextArea.
