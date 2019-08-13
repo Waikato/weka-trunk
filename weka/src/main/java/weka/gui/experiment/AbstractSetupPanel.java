@@ -141,8 +141,7 @@ public abstract class AbstractSetupPanel
   }
 
   /**
-   * Terminates this panel, which means, in the case of this panel, that it sets all references
-   * to associated JFrame objects to null.
+   * Terminates this panel. To be implemented by actual concrete classes.
    */
   public abstract void terminate();
 }

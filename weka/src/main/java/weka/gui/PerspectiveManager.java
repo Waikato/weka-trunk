@@ -276,6 +276,7 @@ public class PerspectiveManager extends JPanel {
       ((AbstractPerspective)m_mainPerspective).terminate();
     }
     m_LogPanel.terminate();
+    m_appMenuBar.removeAll();
   }
 
   /**
