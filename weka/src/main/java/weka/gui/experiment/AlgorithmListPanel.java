@@ -178,6 +178,17 @@ public class AlgorithmListPanel extends JPanel implements ActionListener {
   }
 
   /**
+   * Terminates this panel, which means, in the case of this panel, that it sets all references
+   * to dialog objects to null.
+   */
+  public void terminate() {
+    if (m_PD != null) {
+      m_PD.dispose();
+      m_PD = null;
+    }
+  }
+
+  /**
    * Creates the algorithm list panel with the given experiment.
    * 
    * @param exp a value of type 'Experiment'
