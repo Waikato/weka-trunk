@@ -1005,9 +1005,6 @@ public class ClassifierPanel extends AbstractPerspective implements
   protected void updateRadioLinks() {
 
     m_SetTestBut.setEnabled(m_TestSplitBut.isSelected());
-    if ((m_SetTestFrame != null) && (!m_TestSplitBut.isSelected())) {
-      m_SetTestFrame.setVisible(false);
-    }
     m_CVText.setEnabled(m_CVBut.isSelected());
     m_CVLab.setEnabled(m_CVBut.isSelected());
     m_PercentText.setEnabled(m_PercentBut.isSelected());
@@ -1093,7 +1090,7 @@ public class ClassifierPanel extends AbstractPerspective implements
       if (m_TestLoader != null) {
         try {
           if (m_TestLoader.getStructure() != null) {
-            sp.setInstances(m_TestLoader.getStructure());
+            sp.setInstances(m_TestLoader.getStructure(), true);
           }
         } catch (Exception ex) {
           ex.printStackTrace();
@@ -1112,12 +1109,23 @@ public class ClassifierPanel extends AbstractPerspective implements
       sp.setParentFrame(m_SetTestFrame); // enable Close-Button
       m_SetTestFrame.getContentPane().setLayout(new BorderLayout());
       m_SetTestFrame.getContentPane().add(sp, BorderLayout.CENTER);
+      m_SetTestFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+          m_SetTestFrame.dispose();
+        }
+      });
+      m_SetTestFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosed(java.awt.event.WindowEvent e) {
+          m_SetTestFrame = null;
+        }
+      });
       m_SetTestFrame.pack();
       m_SetTestFrame.setSize(400, 200);
+      m_SetTestFrame.setLocationRelativeTo(SwingUtilities.getWindowAncestor(this));
+      m_SetTestFrame.setVisible(true);
     }
-    m_SetTestFrame
-      .setLocationRelativeTo(SwingUtilities.getWindowAncestor(this));
-    m_SetTestFrame.setVisible(true);
   }
 
   /**
