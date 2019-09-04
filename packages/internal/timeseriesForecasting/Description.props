@@ -5,10 +5,10 @@
 PackageName=timeseriesForecasting
 
 # Version (required)
-Version=1.1.25
+Version=1.1.26
 
 #Date (year-month-day)
-Date=2017-01-19
+Date=2017-07-05
 
 # Title (required)
 Title=Time series forecasting environment.
