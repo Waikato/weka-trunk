@@ -1,0 +1,2 @@
+weka.filters.Filter=\
+ weka.filters.supervised.attribute.gpattributegeneration

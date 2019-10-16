@@ -1,0 +1,77 @@
+# Template Description file for a Weka package
+# 
+
+# Package name (required)
+PackageName=GPAttributeGeneration
+
+# Version (required)
+Version=1.0.1
+
+#Date (year-month-day)
+Date=2019-10-17
+
+# Title (required)
+Title=Genetic Programming Attribute Generation
+
+# Category (recommended)
+Category=Classification, Preprocessing
+
+# Author (required)
+Author=Colin Noakes <c.noakes-07@lboro.ac.uk>
+
+# Maintainer (required)
+Maintainer=Colin Noakes <c.noakes-07@lboro.ac.uk>
+
+# License (required)
+License=GPL 2.0|Mozilla
+
+# Description (required)
+Description=This filter implements a genetic programming system to generate attributes suitable for a decision system such as J48. J48 is itself used to evolve polynomials of the original attributes that aid J48 in correctly classifying the dataset. Multi Objective Optimisation methods NSGA-II and Vector fitness that select on polynomial length, tree size and tree quality are also available. Based on previous work by Koza, Chris Hinde and Kalyanmoy Deb.
+
+Changes=Now works from the command line
+
+# Package URL for obtaining the package archive (required)
+PackageURL=http://prdownloads.sourceforge.net/weka/GPAttributeGeneration1.0.1.zip?download
+
+# URL for further information
+#URL=http://somewhere.net/funkyResearchInfo.html
+
+# Enhances various other packages ?
+#Enhances=packageName1,packageName2,...
+
+# Related to other packages?
+Related=J48
+
+# Dependencies (format: packageName (equality/inequality version_number)
+Depends=weka (>=3.7.5)
+
+# Message to display in installation. Can be used to provide
+# special instructions (e.g. manual stuff needed to complete
+# the installation process). (optional).
+#MessageToDisplayOnInstall=Funky package requires some extra\n\
+ stuff to be installed after installing this package. You will\n\
+ need to blah, blah, blah in order to blah, blah, blah...
+
+# Prevent package from being loaded by Weka if the named
+# files/directories are not present (relative to the package's
+# root directory). Useful for packages that require the user
+# to manually install some third-party library(s). (optional)
+#DoNotLoadIfFileNotPresent=lib/someLibrary.jar,otherStuff/important,...
+
+# Log message to be displayed if package can't be loaded due to
+# missing files/directories. (optional)
+#DoNotLoadIfFileNotPresentMessage=funkyPackage can't be loaded because some \
+ funky libraries are missing. Please download funkyLibrary.jar from \
+ http://www.funky.com and install in $WEKA_HOME/packages/funkyPackage/lib
+
+# Prevent package from being loaded by Weka if the named
+# classes can't be instantiated. Useful for packages that rely
+# on stuff that has to be installed manually (an example is
+# Java3D, which installs itself into the system JRE/JDK. (optional)
+#DoNotLoadIfClassNotPresent=com.some.class.from.some.Where,org.some.other.Class,...
+
+# Log message to be displayed if package can't be loaded due to 
+# missing classes. (optional).
+#DoNotLoadIfClassNotPresentMessage=funkyPackage can't be loaded because \
+ com.funky.FunkyClass can't be instantiated. Have you downloaded and run \
+ the funky software installer for your platform?
