@@ -6,10 +6,10 @@
 PackageName=kerasZoo
 
 # Version (required)
-Version=1.0.1
+Version=1.0.2
 
 #Date
-Date=2019-10-21
+Date=2019-10-23
 
 # Title (required)
 Title=Provides a wrapper classifier for zoo models available in Keras
@@ -28,10 +28,10 @@ License=GPL 3.0
 # Description (required)
 Description=Provides a wrapper classifier for invoking zoo models available in Keras. Python version 2.7.x or higher is required. Also requires the following packages to be installed in python: keras, numpy, pandas, matplotlib and scikit-learn.
 
-Changes=Now determines the number of GPUs available and will prevent the use of mutli_gpu_model at prediction time (even if used at training time) if the number of GPUs in the prediction environment is not greater than 1. Also calls backend.clear_session() after training and each prediction batch to ensure a clean graph in case multiple clients are sharing the same python server for building DL models.
+Changes=This release includes a fix to enable windows paths containing backslashes to be handled correctly when generating python code
 
 # Package URL for obtaining the package archive (required)
-PackageURL=http://prdownloads.sourceforge.net/weka/kerasZoo1.0.1.zip?download
+PackageURL=http://prdownloads.sourceforge.net/weka/kerasZoo1.0.2.zip?download
 
 # URL for further information
 URL=
