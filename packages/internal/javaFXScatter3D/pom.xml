@@ -5,7 +5,7 @@
 
   <groupId>nz.ac.waikato.cms.weka</groupId>
   <artifactId>javaFXScatter3D</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>javaFXScatter3D</name>
@@ -49,9 +49,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/tags/javaFXScatter3D-1.0.0</connection>
-    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/tags/javaFXScatter3D-1.0.0</developerConnection>
-    <url>https://svn.cms.waikato.ac.nz/svn/weka/tags/javaFXScatter3D-1.0.0</url>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external/javaFXScatter3D</connection>
+    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external/javaFXScatter3D</developerConnection>
+    <url>https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external/javaFXScatter3D</url>
   </scm>
 
   <profiles>
