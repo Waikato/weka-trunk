@@ -1,0 +1,52 @@
+# Description file for scatterPlot3D
+#
+# 
+
+# Package name (required)
+PackageName=javaFXScatterPlot3D
+
+# Version (required)
+Version=1.0.0
+
+#Date
+Date=2019-10-31
+
+# Title (required)
+Title=A visualization component for displaying a 3D scatter plot of the data using JavaFX 3D.
+
+Category=Visualization
+
+# Author (required)
+Author=Mark Hall
+
+# Maintainer (required)
+Maintainer=Mark Hall <mhall@pentaho.com>
+
+# License (required)
+License=GPL 3.0
+
+# Description (required)
+Description=A visualization component for displaying a 3D scatter plot of the data using JavaFX.
+
+Changes=This version replaces the old Java3D implementation with one based on JavaFX. Note, for Linux it might be necessary to start Weka with this JVM property: "-Dprism.forceGPU=true".
+
+# Package URL for obtaining the package archive (required)
+PackageURL=http://prdownloads.sourceforge.net/weka/javaFXScatterPlot3D1.0.0.zip?download
+
+# URL for further information
+URL=http://weka.sourceforge.net/doc.packages/javaFXScatterPlot3D
+
+# JavaFX is included with Java 1.8
+JVMVersion=1.8
+
+# Related to other packages?
+#Related=
+
+# Dependencies
+Depends=weka (>=3.8.0)
+
+# Special instructions to be displayed on installation of this package
+#MessageToDisplayOnInstallation=
+
+# Precludes old scatter plot 3D package
+Precludes=scatterPlot3D
