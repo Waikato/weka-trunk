@@ -49,7 +49,7 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external/javaFXScatter3D</connection>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external~/javaFXScatter3D</connection>
     <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external/javaFXScatter3D</developerConnection>
     <url>https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/external/javaFXScatter3D</url>
   </scm>
