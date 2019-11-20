@@ -33,7 +33,8 @@
 
   <!-- properties used when compiling/making packages -->
   <property name="wekaexejar" value="../../../weka/dist/weka.jar"/>
-  <property name="junitjar" value="../../../weka/lib/junit.jar"/>
+  <property name="junitjar" value="../../../weka/lib/junit-4.13-rc-1.jar"/>
+  <property name="hamcrestjar" value="../../../weka/lib/hamcrest-core-1.3.jar"/>
   <property name="wekaclasses" value="../../../weka/build/classes"/>
   <property name="wekalib" value="../../../weka/lib/*"/>
   <property name="wekatestclasses" value="../../../weka/build/testcases"/>
@@ -115,10 +116,10 @@
   <target name="compile_tests_internal" depends="compile_tests" description="Compile tests for a named internal package (run with -DpackageName=package name)">
     <fail message="No package directories present!" unless="${packages_present}"/>
     <echo message="Compiling ${packageName}"/>
-    <echo message="CLASSPATH ${wekaclasses}:${wekatestclasses}:${junitjar}:${cp}"/>  
+    <echo message="CLASSPATH ${wekaclasses}:${wekatestclasses}:${junitjar}:${hamcrestjar}:${cp}"/>  
     <ant antfile="build_package.xml" dir="${packages_internal}/${packageName}" target="compile_tests" inheritall="false">
       <property name="package" value="${packageName}" />
-      <property name="java.class.path" value="${wekaclasses}:${junitjar}:${wekatestclasses}:${cp}"/>
+      <property name="java.class.path" value="${wekaclasses}:${junitjar}:${hamcrestjar}:${wekatestclasses}:${cp}"/>
     </ant>
   </target>
       
@@ -394,7 +395,7 @@
     <echo message="Compiling ${packageName}"/>
     <ant antfile="build_package.xml" dir="${packages_external}/${packageName}" target="compile_tests" inheritall="false">
       <property name="package" value="${packageName}" />
-      <property name="java.class.path" value="${wekaclasses}:${junitjar}:${wekatestclasses}:${cp}"/>
+      <property name="java.class.path" value="${wekaclasses}:${junitjar}:${hamcrestjar}:${wekatestclasses}:${cp}"/>
     </ant>
   </target>
 
