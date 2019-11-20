@@ -663,7 +663,7 @@
     <copy file="${lib}/arpack_combined.jar" todir="${build}/classes" />      
     <rmic base="${build}/classes"
        classname="weka.experiment.RemoteEngine" if:true="remoteengine_present"/>
-    <unzip src="${lib}/java-cup.jar" dest="${build}/classes">
+    <unzip src="${lib}/java-cup-11b-runtime.jar" dest="${build}/classes">
       <patternset>
         <include name="java_cup/runtime/**/*"/>
       </patternset>
@@ -686,6 +686,26 @@
     <unzip src="${lib}/jclipboardhelper-0.1.2.jar" dest="${build}/classes">
       <patternset>
         <include name="com/**/*"/>
+      </patternset>
+    </unzip>
+    <unzip src="${lib}/istack-commons-runtime-3.0.8.jar" dest="${build}/classes">
+      <patternset>
+        <include name="com/**/*"/>
+      </patternset>
+    </unzip>
+    <unzip src="${lib}/jaxb-runtime-2.3.2.jar" dest="${build}/classes">
+      <patternset>
+        <include name="com/**/*"/>
+      </patternset>
+    </unzip>
+    <unzip src="${lib}/jakarta.xml.bind-api-2.3.2.jar" dest="${build}/classes">
+      <patternset>
+        <include name="javax/**/*"/>
+      </patternset>
+    </unzip>
+    <unzip src="${lib}/jakarta.activation-api-1.2.1.jar" dest="${build}/classes">
+      <patternset>
+        <include name="javax/**/*"/>
       </patternset>
     </unzip>
 <!--    <unzip src="${lib}/mtj.jar" dest="${build}/classes">
