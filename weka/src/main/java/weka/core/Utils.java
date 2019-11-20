@@ -98,6 +98,19 @@ public final class Utils implements RevisionHandler {
   }
 
   /**
+   * The inverse of dateToMillis(String, String).
+   *
+   * @param millis the milliseconds from 1 January 1970, given as a double
+   * @param dateFormat the date format as a string
+   *
+   * @return the date as a string based on the given date format
+   */
+  public static String millisToDate(double millis, String dateFormat) {
+
+    return (new java.text.SimpleDateFormat(dateFormat)).format(new java.util.Date((long) millis));
+  }
+
+  /**
    * Tests if the given value codes "missing".
    * 
    * @param val the value to be tested
