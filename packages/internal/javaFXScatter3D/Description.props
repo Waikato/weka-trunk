@@ -9,7 +9,7 @@ PackageName=javaFXScatterPlot3D
 Version=1.0.0
 
 #Date
-Date=2019-10-31
+Date=2019-11-29
 
 # Title (required)
 Title=A visualization component for displaying a 3D scatter plot of the data using JavaFX 3D.
@@ -37,7 +37,10 @@ PackageURL=http://prdownloads.sourceforge.net/weka/javaFXScatterPlot3D1.0.0.zip?
 URL=http://weka.sourceforge.net/doc.packages/javaFXScatterPlot3D
 
 # JavaFX is included with Java 1.8
-JVMVersion=1.8
+#JVMVersion=1.8
+
+# JavaFX is included with Java 1.8; later versions of the JRE might have it included as an optional module.
+DoNotLoadIfClassNotPresent=javafx.scene.Scene
 
 # Related to other packages?
 #Related=
