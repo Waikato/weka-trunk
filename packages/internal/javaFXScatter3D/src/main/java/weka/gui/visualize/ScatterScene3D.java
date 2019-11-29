@@ -1,3 +1,24 @@
+/*
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ *    ScatterScene3D.java
+ *    Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
+ *
+ */
+
 package weka.gui.visualize;
 
 import javafx.application.Platform;
@@ -29,6 +50,11 @@ import javax.swing.SwingUtilities;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+/**
+ * Handles scene creation and rendering.
+ *
+ * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ */
 public class ScatterScene3D {
 
   protected final Group m_root = new Group();
@@ -61,7 +87,9 @@ public class ScatterScene3D {
   protected double m_mouseDeltaX;
   protected double m_mouseDeltaY;
 
+  /** the data to be plotted */
   protected Instances m_data;
+
   protected int m_xIndex;
   protected int m_yIndex;
   protected int m_zIndex;
@@ -100,6 +128,9 @@ public class ScatterScene3D {
     return retString;
   }
 
+  /**
+   * Set up the camera
+   */
   protected void buildCamera() {
     m_root.getChildren().add(m_cameraXform);
     m_cameraXform.getChildren().add(m_cameraXform2);
@@ -114,6 +145,9 @@ public class ScatterScene3D {
     m_cameraXform.rx.setAngle(CAMERA_INITIAL_X_ANGLE);
   }
 
+  /**
+   * Construct axes
+   */
   protected void buildAxes() {
     if (m_data != null) {
       int numAttributes = m_data.numAttributes();
@@ -367,6 +401,9 @@ public class ScatterScene3D {
     m_world.getChildren().addAll(m_axisGroup);
   }
 
+  /**
+   * Map instances data into the scene
+   */
   protected void buildData() {
     if (m_data == null) {
       return;
@@ -437,6 +474,15 @@ public class ScatterScene3D {
     m_world.getChildren().add(m_dataForm);
   }
 
+  /**
+   * Set the Instances to visualize
+   *
+   * @param data the instances to visualize
+   * @param x x axis
+   * @param y y axis
+   * @param z z axis
+   * @param c coloring axis
+   */
   public void setInstances(Instances data, int x, int y, int z, int c) {
     m_data = data;
     m_xIndex = x;
@@ -454,6 +500,14 @@ public class ScatterScene3D {
     }
   }
 
+  /**
+   * Update the current axes being visualized
+   *
+   * @param x x axis
+   * @param y y axis
+   * @param z z axis
+   * @param c coloring axis
+   */
   public void updateAxes(int x, int y, int z, int c) {
     if (m_data == null) {
       return;
@@ -474,6 +528,9 @@ public class ScatterScene3D {
     }
   }
 
+  /**
+   * Add a legend to the scene
+   */
   protected void addLegend() {
     if (m_data == null) {
       return;
@@ -568,6 +625,11 @@ public class ScatterScene3D {
     }
   }
 
+  /**
+   * Constructs the whole scene
+   *
+   * @return the Scene object
+   */
   public Scene buildScene() {
     m_root.getChildren().add(m_world);
     m_root.setDepthTest(DepthTest.ENABLE);
@@ -586,6 +648,12 @@ public class ScatterScene3D {
     return m_scene;
   }
 
+  /**
+   * Handle mouse events
+   *
+   * @param scene the Scene
+   * @param root the root node of the scene
+   */
   private void handleMouse(Scene scene, final Node root) {
     scene.setOnMousePressed(new EventHandler<MouseEvent>() {
       @Override
@@ -655,6 +723,11 @@ public class ScatterScene3D {
     });
   }
 
+  /**
+   * Gets a swing component containing the scene
+   *
+   * @return a swing component containing the scene
+   */
   public JComponent getSwingComponent() {
     JFXPanel fxPanel = new JFXPanel();
     Scene scene = buildScene();
@@ -663,6 +736,11 @@ public class ScatterScene3D {
     return fxPanel;
   }
 
+  /**
+   * Get the Scene object
+   *
+   * @return the Scene object
+   */
   public Scene getScene() {
     if (m_scene != null) {
       return m_scene;

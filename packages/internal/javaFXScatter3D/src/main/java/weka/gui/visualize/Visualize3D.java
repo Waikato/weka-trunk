@@ -15,7 +15,7 @@
 
 /*
  *    Visualize3D.java
- *    Copyright (C) 2019 Hitachi Vantara Labs
+ *    Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  *
  */
 

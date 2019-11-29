@@ -15,7 +15,7 @@
 
 /*
  *    KF3DPerspective.java
- *    Copyright (C) 2019 Pentaho Corporation
+ *    Copyright (C) 2019 University of Waikato, Hamilton, New Zealand
  *
  */
 
