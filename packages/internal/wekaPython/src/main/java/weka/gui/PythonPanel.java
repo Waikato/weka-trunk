@@ -440,7 +440,7 @@ public class PythonPanel extends JPanel {
    * @param displayLogger true if a log panel is to be displayed at the bottom
    *          of this panel. Not needed in the Explorer as we get passed the
    *          Explorer's global log
-   * @param explorer holds the Explorer instance (will be null if we're not
+   * @param explorer holds the Explorer instance (will be null if we'm_re not
    *          being used in the Explorer)
    */
   public PythonPanel(boolean displayLogger, Explorer explorer) {
