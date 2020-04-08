@@ -78,53 +78,6 @@ public class JRILoader {
   }
 
   /**
-   * Mac-specific method to try to fix up location of libjvm.dylib in rJava.so.
-   */
-  private static void fixUprJavaLibraryOnOSX() throws Exception {
-
-    String osType = System.getProperty("os.name");
-    if ((osType != null) && (osType.contains("Mac OS X"))) {
-
-      // Get name embedded in rJava.so
-      String[] cmd = { // Need to use string array solution to make piping work
-              "/bin/sh",
-              "-c",
-              "/usr/bin/otool -L " + System.getProperty("r.libs.user") + "/rJava/libs/rJava.so | /usr/bin/grep libjvm.dylib | " +
-                      "/usr/bin/sed 's/^[[:space:]]*//g' | /usr/bin/sed 's/ (.*//g'"
-      };
-      Process p = Runtime.getRuntime().exec(cmd);
-      int execResult = p.waitFor();
-      if (execResult != 0) {
-        BufferedReader bf = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-        String line;
-        while ((line = bf.readLine()) != null) {
-          System.err.println(line);
-        }
-      } else {
-        String javaHome = System.getProperty("java.home");
-        BufferedReader bf = new BufferedReader(new InputStreamReader(p.getInputStream()));
-        String firstLine = bf.readLine();
-        if (firstLine.equals(javaHome + "/lib/server/libjvm.dylib")) {
-          System.err.println("Location embedded in rJava.so seems to be correct!");
-        } else {
-          System.err.println("Trying to use /usr/bin/install_name_tool to fix up location of libjvm.dylib in rJava.so.");
-          p = Runtime.getRuntime().exec("/usr/bin/install_name_tool -change " + firstLine + " " +
-                  javaHome + "/lib/server/libjvm.dylib " +
-                  System.getProperty("r.libs.user") + "/rJava/libs/rJava.so");
-          execResult = p.waitFor();
-          if (execResult != 0) {
-            bf = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            String line;
-            while ((line = bf.readLine()) != null) {
-              System.err.println(line);
-            }
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * Checks if environment variable R_HOME is available, first in Java cache of process environment and then
    * in actual process environment. Tries to guess value of R_HOME if environment variable or r.home property
    * do not have an appropriate value.
@@ -345,14 +298,6 @@ public class JRILoader {
       File rJavaF = new File(rLibsUser + File.separator + "rJava");
       if (rJavaF.exists()) {
         System.err.println("Found rJava installed in " + rJavaF.getPath());
-
-        try {
-          fixUprJavaLibraryOnOSX();
-        } catch (Exception ex) {
-          System.err.println("Failed to fix up rJava.so.");
-          s_rHome = null;
-          return false;
-        }
       } else {
         System.err.println("Did not find rJava installed in " + rJavaF.getPath() + " -- trying to install.");
         try {
@@ -381,14 +326,6 @@ public class JRILoader {
         } catch (Exception ex) {
           System.err.println("Failed to install rJava.");
           ex.printStackTrace();
-          s_rHome = null;
-          return false;
-        }
-
-        try {
-          fixUprJavaLibraryOnOSX();
-        } catch (Exception ex) {
-          System.err.println("Failed to fix up rJava.so.");
           s_rHome = null;
           return false;
         }
