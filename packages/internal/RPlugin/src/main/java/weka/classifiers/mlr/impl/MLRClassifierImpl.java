@@ -66,7 +66,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Implementation class for a wrapper classifier for the MLR R library:<br>
  * <br>
  * 
- * http://cran.r-project.org/web/packages/mlr/
+ * https://cran.r-project.org/web/packages/mlr/
  * 
  * <p>
  * The class will attempt to install and load the MLR library if it is not
@@ -176,7 +176,7 @@ public class MLRClassifierImpl implements BatchPredictor, OptionHandler,
       + "and making predictions with various R classifiers and regression methods. Check\n\n"
       + "  https://mlr-org.github.io/mlr/articles/tutorial/integrated_learners.html\n\n"
       + "for the list of algorithms in MLR, and\n\n"
-      + "  http://http://cran.r-project.org/web/packages/mlr\n\n"
+      + "  https://cran.r-project.org/web/packages/mlr\n\n"
       + "for further information on the package and its algorithms.\n\n"
       + "Note that a classifier/regressor will be installed in R when it is selected as the "
       + "learner parameter for MLRClassifier and has not been installed before in R. This may take a little while"

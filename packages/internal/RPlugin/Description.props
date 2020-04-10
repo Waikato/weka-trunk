@@ -35,7 +35,7 @@ PackageURL=http://prdownloads.sourceforge.net/weka/RPlugin1.3.28.zip?download
 URL=http://markahall.blogspot.co.nz/2012/07/r-integration-in-weka.html
 
 # Changes in this release
-Changes=The RPlugin works with the latest release of the rJava package for R on macOS now. This also means the super hacky workaround on macOS is no longer necessary.
+Changes=The RPlugin works with the latest release of the rJava package for R on macOS now. This also means the super hacky workaround on macOS is no longer necessary. Relevant JAR files and ZIP files have been replaced with code from rJava 0.9-12. HTTP has been replaced by HTTPS in URLs. xstream JAR file has been updated.
 
 # Enhances various other packages ?
 # Enhances=packageName1,packageName2,...

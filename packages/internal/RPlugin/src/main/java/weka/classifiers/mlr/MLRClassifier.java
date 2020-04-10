@@ -356,7 +356,7 @@ public class MLRClassifier extends RandomizableClassifier
             + "because it involves downloading and processing R packages.\n\nCheck\n\n"
             + "  https://mlr-org.github.io/mlr/articles/tutorial/integrated_learners.html\n\n"
             +"for the list of R algorithms available via MLR, most of which are available through this WEKA classifier, and\n\n"
-            +"  http://http://cran.r-project.org/web/packages/mlr\n\n"
+            +"  https://cran.r-project.org/web/packages/mlr\n\n"
             +"for further information on the package and its algorithms. The appropriate citation for mlr is\n\n" + getTechnicalInformation().toString();
   }
 

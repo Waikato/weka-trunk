@@ -304,7 +304,7 @@ public class JRILoader {
           String[] cmd = new String[]{s_rHome + File.separator + "bin" + File.separator + rScriptExeString, "-e",
                   "local(options(install.packages.compile.from.source='never'));" + // No spaces!
                           "local({r=getOption('repos');" + // Need to use = instead of <- for Windows!
-                          "r['CRAN']='http://cloud.r-project.org';" + // Need to use = instead of <- for Windows!
+                          "r['CRAN']='https://cloud.r-project.org';" + // Need to use = instead of <- for Windows!
                           "options(repos=r)});" +
                           "install.packages('rJava')"}; // Single quotes everywhere for Windows!
           Process p = Runtime.getRuntime().exec(cmd);

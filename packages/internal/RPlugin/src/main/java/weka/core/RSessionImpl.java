@@ -109,7 +109,7 @@ public class RSessionImpl implements RSessionAPI, REngineCallbacks,
         // does not try and start a tcl/tk interface for mirror selection!
         System.err.println("Setting a default package mirror in R...");
         s_engine.parseAndEval("local({r <- getOption(\"repos\"); "
-          + "r[\"CRAN\"] <- \"http://cloud.r-project.org\"; "
+          + "r[\"CRAN\"] <- \"https://cloud.r-project.org\"; "
           + "options(repos=r)})");
 
         s_engine.parseAndEval("local(options(help_type = \"html\"))");

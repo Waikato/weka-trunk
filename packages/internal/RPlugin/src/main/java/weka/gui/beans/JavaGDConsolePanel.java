@@ -425,7 +425,7 @@ public class JavaGDConsolePanel extends JPanel implements JavaGDListener {
           + "you have the R_HOME environment variable set, R is in your"
           + " path and that java.library.path property points to the "
           + "JRI native library. Information on settup for different "
-          + "OS can be found at http://www.rforge.net/JRI\n\n";
+          + "OS can be found at https://www.rforge.net/JRI\n\n";
         m_rConsole.getDocument().insertString(0, message, null);
       }
     } catch (BadLocationException e) {
