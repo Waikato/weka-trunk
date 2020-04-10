@@ -498,7 +498,6 @@ public class RSessionImpl implements RSessionAPI, REngineCallbacks,
       e.printStackTrace();
       return false;
     }
-    System.err.println("Successfully loaded library '" + libraryName + "'.");
 
     return true;
   }

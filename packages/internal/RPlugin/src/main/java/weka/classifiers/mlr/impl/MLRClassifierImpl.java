@@ -354,16 +354,10 @@ public class MLRClassifierImpl implements BatchPredictor, OptionHandler,
       return;
     }
     eng.setLog(this, m_logger);
-    if (!eng.loadLibrary(this, "XML")) {
-
-      // try installing
-      if (!eng.installLibrary(this, "XML")) {
-        return;
-      }
-    }
 
     if (!eng.loadLibrary(this, "mlr")) {
       if (!eng.installLibrary(this, "mlr")) {
+        RSession.releaseSession(this);
         return;
       }
     }
