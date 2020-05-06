@@ -82,6 +82,9 @@ public final class Utils implements RevisionHandler {
       }
     };
 
+  /** Suffixes for ordinal representation of indices. */
+  public static String[] ORDINAL_SUFFIXES = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+
   /**
    * Turns a given date string into Java's internal representation (milliseconds
    * from 1 January 1970).
@@ -108,6 +111,22 @@ public final class Utils implements RevisionHandler {
   public static String millisToDate(double millis, String dateFormat) {
 
     return (new java.text.SimpleDateFormat(dateFormat)).format(new java.util.Date((long) millis));
+  }
+
+  /**
+   * Turns a zero-based index into its ordinal representation, e.g., the integer 0 will be turned into the string "1st",
+   * 1 will be turned into the string "2nd", etc. An error message will be returned as a string if the index is negative.
+   *
+   * @param i the 0-based index for which the ordinal representation is required (as a string)
+   * @return the string giving the ordinal representation
+   */
+  public static String indexToOrdinal(int i) {
+
+    if (i < 0) {
+      return "The 0-based index " + i + " is negative!";
+    }
+    i++;
+    return (i % 100 == 11 || i % 100 == 12 || i % 100 == 13) ? i + "th" : i + ORDINAL_SUFFIXES[i % 10];
   }
 
   /**
