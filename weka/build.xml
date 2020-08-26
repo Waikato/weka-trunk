@@ -674,7 +674,7 @@
         <include name="org/**/*"/>
       </patternset>
     </unzip>
-    <unzip src="${lib}/commons-compress-1.19.jar" dest="${build}/classes">
+    <unzip src="${lib}/commons-compress-1.20.jar" dest="${build}/classes">
       <patternset>
         <include name="org/**/*"/>
       </patternset>
@@ -689,22 +689,22 @@
         <include name="com/**/*"/>
       </patternset>
     </unzip>
-    <unzip src="${lib}/istack-commons-runtime-3.0.8.jar" dest="${build}/classes">
+    <unzip src="${lib}/istack-commons-runtime-3.0.11.jar" dest="${build}/classes">
       <patternset>
         <include name="com/**/*"/>
       </patternset>
     </unzip>
-    <unzip src="${lib}/jaxb-runtime-2.3.2.jar" dest="${build}/classes">
+    <unzip src="${lib}/jaxb-runtime-2.3.3.jar" dest="${build}/classes">
       <patternset>
         <include name="com/**/*"/>
       </patternset>
     </unzip>
-    <unzip src="${lib}/jakarta.xml.bind-api-2.3.2.jar" dest="${build}/classes">
+    <unzip src="${lib}/jakarta.xml.bind-api-2.3.3.jar" dest="${build}/classes">
       <patternset>
         <include name="javax/**/*"/>
       </patternset>
     </unzip>
-    <unzip src="${lib}/jakarta.activation-api-1.2.1.jar" dest="${build}/classes">
+    <unzip src="${lib}/jakarta.activation-api-1.2.2.jar" dest="${build}/classes">
       <patternset>
         <include name="javax/**/*"/>
       </patternset>
