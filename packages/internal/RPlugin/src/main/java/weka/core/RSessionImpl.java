@@ -812,6 +812,10 @@ public class RSessionImpl implements RSessionAPI, REngineCallbacks,
   @Override
   public void RWriteConsole(REngine eng, String text, int oType) {
     if (oType == 0) {
+      if (System.getProperty("os.name").contains("Windows")) {
+        // Remove extraneous characters on Windows
+        text = text.replaceAll("(\u0002\u00FF\u00FE)(.*?)(\u0003\u00FF\u00FE)","$2");
+      }
       m_consoleBuffer.add(text);
     }
     String t = "";
