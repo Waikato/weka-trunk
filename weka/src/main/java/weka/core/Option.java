@@ -305,12 +305,7 @@ public class Option implements RevisionHandler {
                     .add("-" + parameterDescription.commandLineParamName());
                 }
               } else {
-                if (value.toString().length() > 0) {
-                  options.add(value.toString());
-                } else {
-                  // don't allow empty strings
-                  options.remove(options.size() - 1);
-                }
+                options.add(value.toString());
               }
             }
           }
@@ -426,11 +421,10 @@ public class Option implements RevisionHandler {
 
           if (parameterDescription != null
             && parameterDescription.commandLineParamName().length() > 0) {
-            boolean processOpt = false;
+            // boolean processOpt = false;
             String optionValue = "";
             Object valueToSet = null;
             if (parameterDescription.commandLineParamIsFlag()) {
-              processOpt = true;
               valueToSet =
                 (Utils.getFlag(parameterDescription.commandLineParamName(),
                   options));
@@ -438,13 +432,12 @@ public class Option implements RevisionHandler {
               optionValue =
                 Utils.getOption(parameterDescription.commandLineParamName(),
                   options);
-              processOpt = optionValue.length() > 0;
             }
 
             // grab the default/current return value so that we can determine
             // the type
             Object value = getter.invoke(target, getterArgs);
-            if (value != null && processOpt) {
+            if (value != null) {
               if (value.getClass().isArray() && ((Object[]) value).length >= 0) {
                 // We're interested in the actual element type...
                 Class<?> elementType =
@@ -740,5 +733,37 @@ public class Option implements RevisionHandler {
    */
   public String getRevision() {
     return RevisionUtils.extract("$Revision$");
+  }
+
+  public static void main(String[] args) {
+    if (args.length > 0) {
+      String command = args[0];
+      if (args.length > 1) {
+        String targetClass = args[1].trim();
+        try {
+          Object toTry = Utils.forName(null, targetClass, null);
+          args[0] = ""; args[1] = "";
+          if (command.equalsIgnoreCase("list")) {
+            Vector<Option> opts = Option.listOptionsForClass(toTry.getClass());
+            for (Option o : opts) {
+              System.out.println(o.synopsis());
+            }
+          } else if (command.equalsIgnoreCase("get")) {
+            String[] opts = Option.getOptions(toTry, toTry.getClass());
+            System.out.println(Utils.joinOptions(opts));
+          } else if (command.equalsIgnoreCase("set")) {
+            System.out.println("Before:");
+            String[] opts = Option.getOptions(toTry, toTry.getClass());
+            System.out.println(Utils.joinOptions(opts));
+            System.out.println("After:");
+            Option.setOptions(args, toTry, toTry.getClass());
+            opts = Option.getOptions(toTry, toTry.getClass());
+            System.out.println(Utils.joinOptions(opts));
+          }
+        } catch (Exception ex) {
+          ex.printStackTrace();
+        }
+      }
+    }
   }
 }
