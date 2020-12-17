@@ -1059,7 +1059,6 @@ public final class Utils implements RevisionHandler {
     String optionString = "";
     for (String element : optionArray) {
       if (element.equals("")) {
-        optionString += "\"\" ";
         continue;
       }
       boolean escape = false;
