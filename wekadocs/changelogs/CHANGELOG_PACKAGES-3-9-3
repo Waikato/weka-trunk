@@ -421,3 +421,457 @@ Changed paths:
 
 [maven-release-plugin] prepare for next development iteration
 ------------------------------------------------------------------------
+r14952 | eibe | 2018-10-01 18:00:13 +1300 (Mon, 01 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/Description.props
+   M /trunk/packages/internal/RPlugin/build_package.xml
+   A /trunk/packages/internal/RPlugin/libExternal/jna-4.5.2.jar
+   A /trunk/packages/internal/RPlugin/libExternal/jna-platform-4.5.2.jar
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/impl/MLRClassifierImpl.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRINativeLoader.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JavaGDOffscreenRenderer.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+   A /trunk/packages/internal/RPlugin/src/main/java/weka/core/SetEnvironmentVariables.java
+
+Lots of changes to try to make things work without the user having to set environment variables if R is installed in its default location. Finding the R executable on Windows currently still not working if user has not explicitly included it in the path. Description.props and javadoc needs to be updated to describe new (hopefully) simplified installation process. Version information in Description.props also needs to be updated. Also fixed JavaGD native library loading on macOS.
+------------------------------------------------------------------------
+r14953 | eibe | 2018-10-01 22:21:10 +1300 (Mon, 01 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/SetEnvironmentVariables.java
+
+Appropriate folder containing R executable is now automatically added to PATH under Windows.
+------------------------------------------------------------------------
+r14954 | eibe | 2018-10-02 18:28:31 +1300 (Tue, 02 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/Description.props
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/MLRClassifier.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/impl/MLRClassifierImpl.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JavaGDOffscreenRenderer.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+
+More changes. Updated Description.props. Updated to latest version of MLR. LiquidSVM for classification in MLR appears to be broken though.
+------------------------------------------------------------------------
+r14955 | eibe | 2018-10-02 22:30:53 +1300 (Tue, 02 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+
+Small changes to make things work when running WEKA as administrator on Windows. .libPaths() doese not return user-specific lib in that case but WEKA/R does not have write access to the system-wide library folder, even in that case.
+------------------------------------------------------------------------
+r14956 | eibe | 2018-10-03 22:28:28 +1300 (Wed, 03 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+
+Fixe for case when R is installed in user account and not syste wide.
+------------------------------------------------------------------------
+r14957 | eibe | 2018-10-05 11:02:01 +1300 (Fri, 05 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/Description.props
+
+Checked in Description.props, which now also mentions bitness issue.
+------------------------------------------------------------------------
+r14958 | eibe | 2018-10-05 17:45:40 +1300 (Fri, 05 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/build_package.xml
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/impl/MLRClassifierImpl.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+   A /trunk/packages/internal/RPlugin/src/main/java/weka/core/REngineStartup.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSession.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+
+More changes to improve stability if things go wrong. WEKA should no longer hang if, for example, libjvm is not found. Also, JAVA_HOME is now automatically being set on Windows machines if it is not available already, based on the value in the java.home property. (Java 11 no longer stores the location of Java in the Windows registry so rJava and JavaGD were not able to figure out where Java is located. Moreover, retrieval of the relevant info from the registry was broken for JavaGD and recent versions of Java anyway.)
+------------------------------------------------------------------------
+r14959 | eibe | 2018-10-08 14:55:38 +1300 (Mon, 08 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/Description.props
+
+Bumped the WEKA requirement up to 3.9.1 again.
+------------------------------------------------------------------------
+r14960 | eibe | 2018-10-08 17:20:44 +1300 (Mon, 08 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+
+The test for whether to pop up a window when installing a package in R is now (!GraphicsEnvironment.isHeadless() && System.getProperty("weka.started.via.GUIChooser").equals("true")). The relevant property is set in JRILoader when R home is checked for. It is set to true if weka.gui.GUIChooser is in the method call stack at that point. This means the notification will show up regardless of whether the Explorer or the Knowledge Flow or some other GUI is used, as long as WEKA was started via the GUIChooser.
+------------------------------------------------------------------------
+r14961 | mhall | 2018-10-10 15:43:13 +1300 (Wed, 10 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/MLRClassifier.java
+
+Fixed a NPE that would occur in closeREngine() when loading a model to use on the command line
+------------------------------------------------------------------------
+r14966 | eibe | 2018-10-10 17:25:36 +1300 (Wed, 10 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/Description.props
+   M /trunk/packages/internal/RPlugin/build_package.xml
+   D /trunk/packages/internal/RPlugin/ivy.xml
+   D /trunk/packages/internal/RPlugin/ivysettings.xml
+   A /trunk/packages/internal/RPlugin/libExternal/REngine.jar
+   A /trunk/packages/internal/RPlugin/libExternal/kxml2-min-2.3.0.jar
+   A /trunk/packages/internal/RPlugin/libExternal/xmlpull-1.1.3.1.jar
+   A /trunk/packages/internal/RPlugin/libExternal/xpp3_min-1.1.4c.jar
+   A /trunk/packages/internal/RPlugin/libExternal/xstream-1.4.10.jar
+   M /trunk/packages/internal/RPlugin/libExternalPreload/REngine.zip
+   M /trunk/packages/internal/RPlugin/libExternalPreload/rJavaClassLoader.zip
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/impl/MLRClassifierImpl.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/gui/beans/RScriptExecutor.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/knowledgeflow/steps/RScriptExecutor.java
+
+Changes so that build process no longer uses ivy, etc. Also updated .jar and .zip files as much as possible. Updated some URLs in documentation as well.
+------------------------------------------------------------------------
+r14967 | eibe | 2018-10-10 17:26:36 +1300 (Wed, 10 Oct 2018) | 1 line
+Changed paths:
+   D /trunk/packages/internal/RPlugin/build-res
+
+build-res directory had not been deleted in SVN.
+------------------------------------------------------------------------
+r14968 | eibe | 2018-10-10 18:11:49 +1300 (Wed, 10 Oct 2018) | 1 line
+Changed paths:
+   D /trunk/packages/internal/RPlugin/build.properties
+   M /trunk/packages/internal/RPlugin/build_package.xml
+   A /trunk/packages/internal/RPlugin/libExternal/JRI.jar
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+
+Removed requirement for custom JRI.jar by setting appropriate system property in checkRHome().
+------------------------------------------------------------------------
+r14969 | eibe | 2018-10-10 18:12:55 +1300 (Wed, 10 Oct 2018) | 1 line
+Changed paths:
+   D /trunk/packages/internal/RPlugin/src_modifiedJRI/JRI
+
+Deleted JRI source code in src_modifiedJRI.
+------------------------------------------------------------------------
+r14970 | eibe | 2018-10-10 20:23:09 +1300 (Wed, 10 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/build_package.xml
+   A /trunk/packages/internal/RPlugin/lib
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+
+Modified JRI folder has now been completely removed because we can set the static jriLoaded variable in Rengine via reflection once the class has been loaded into the root class loader. This happens in JRILoader. Also added empty lib folder.
+------------------------------------------------------------------------
+r14971 | eibe | 2018-10-11 09:16:12 +1300 (Thu, 11 Oct 2018) | 1 line
+Changed paths:
+   A /trunk/packages/internal/RPlugin/libExternal/JRIEngine.jar
+
+Had forgotten to check in JRIEngine.jar.
+------------------------------------------------------------------------
+r14972 | mhall | 2018-10-11 10:21:20 +1300 (Thu, 11 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/build_package.xml
+
+Now creates a simple RPlugin.zip file in dist
+------------------------------------------------------------------------
+r14977 | eibe | 2018-10-17 12:15:59 +1300 (Wed, 17 Oct 2018) | 1 line
+Changed paths:
+   D /trunk/packages/internal/RPlugin/src_modifiedJRI
+
+src_modifiedJRI had reappeared for some reason. Deleted.
+------------------------------------------------------------------------
+r14978 | eibe | 2018-10-17 17:18:22 +1300 (Wed, 17 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/Description.props
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/JRILoader.java
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+
+Further changes specific to macOS. The location of libjvm.so is now changed in all relevant R libraries whenever necessary before they are loaded by RPlugin to make sure they are consistent with the JVM running WEKA. Otherwise, the JVM will crash. Trouble will still occur if multiple instances of WEKA are run simultaneously using different JVMs.
+------------------------------------------------------------------------
+r14979 | eibe | 2018-10-17 17:29:58 +1300 (Wed, 17 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+
+Cleaned up output a bit.
+------------------------------------------------------------------------
+r14981 | eibe | 2018-10-18 10:59:31 +1300 (Thu, 18 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/core/RSessionImpl.java
+
+Current working directory is now backed up when R session is acquired and restored to the backed-up value when the session is dropped.
+------------------------------------------------------------------------
+r14984 | eibe | 2018-10-19 13:21:22 +1300 (Fri, 19 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/RPlugin/src/main/java/weka/classifiers/mlr/MLRClassifier.java
+
+R engine is now automatically shutdown in MLR when runClassifier() completes if GUIChooser is not in method call stack when the R session is established. This happens unless the r.shutdown property has value "false". The default value of this property has been changed to "true".
+------------------------------------------------------------------------
+r14995 | eibe | 2018-10-26 20:31:59 +1300 (Fri, 26 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/discriminantAnalysis/Description.props
+   M /trunk/packages/internal/discriminantAnalysis/src/main/java/weka/classifiers/functions/LDA.java
+
+Fixed bug in LDA: attribute names were incorrect when class attribute was not the last attribute in the data.
+------------------------------------------------------------------------
+r14996 | mhall | 2018-10-28 14:20:29 +1300 (Sun, 28 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/discriminantAnalysis/build_package.xml
+
+Added package property to build file
+------------------------------------------------------------------------
+r14998 | mhall | 2018-10-28 14:31:28 +1300 (Sun, 28 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/discriminantAnalysis/pom.xml
+
+[maven-release-plugin] prepare release discriminantAnalysis-1.0.3
+------------------------------------------------------------------------
+r15000 | mhall | 2018-10-28 14:31:31 +1300 (Sun, 28 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/discriminantAnalysis/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------
+r15003 | eibe | 2018-10-30 13:37:57 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/supervisedAttributeScaling/Description.props
+   M /trunk/packages/internal/supervisedAttributeScaling/src/main/java/weka/filters/supervised/attribute/SupervisedAttributeScaler.java
+
+Improved description of the algorithm provided by the global information.
+------------------------------------------------------------------------
+r15004 | eibe | 2018-10-30 16:06:22 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/gridSearch/src/main/java/weka/classifiers/meta/GridSearch.java
+
+Fixes to documentation. Also, setClassifier() no longer throws Exceptions.
+------------------------------------------------------------------------
+r15005 | eibe | 2018-10-30 16:37:42 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/gridSearch/src/main/java/weka/classifiers/meta/GridSearch.java
+
+Properties are now read into the correct class loader.
+------------------------------------------------------------------------
+r15008 | eibe | 2018-10-30 17:14:24 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/gridSearch/Description.props
+
+Description.props updated for 1.0.12 release.
+------------------------------------------------------------------------
+r15009 | mhall | 2018-10-30 18:09:18 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/supervisedAttributeScaling/build_package.xml
+
+Added package property to build file
+------------------------------------------------------------------------
+r15010 | mhall | 2018-10-30 18:10:58 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/supervisedAttributeScaling/pom.xml
+
+Updated pom
+------------------------------------------------------------------------
+r15012 | mhall | 2018-10-30 18:14:07 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/supervisedAttributeScaling/pom.xml
+
+[maven-release-plugin] prepare release supervisedAttributeScaling-1.0.2
+------------------------------------------------------------------------
+r15014 | mhall | 2018-10-30 18:14:11 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/supervisedAttributeScaling/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------
+r15016 | mhall | 2018-10-30 18:29:09 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/gridSearch/pom.xml
+
+[maven-release-plugin] prepare release gridSearch-1.0.12
+------------------------------------------------------------------------
+r15018 | mhall | 2018-10-30 18:29:12 +1300 (Tue, 30 Oct 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/gridSearch/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------
+r15025 | mhall | 2018-11-10 11:47:32 +1300 (Sat, 10 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/alternatingDecisionTrees/build_package.xml
+   M /trunk/packages/internal/alternatingDecisionTrees/src/main/java/weka/classifiers/trees/ADTree.java
+   M /trunk/packages/internal/alternatingDecisionTrees/src/main/java/weka/classifiers/trees/LADTree.java
+
+Updated for changes to IterativeClssifier and to support resumable training
+------------------------------------------------------------------------
+r15028 | mhall | 2018-11-10 13:01:39 +1300 (Sat, 10 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/alternatingModelTrees/build_package.xml
+   M /trunk/packages/internal/alternatingModelTrees/src/main/java/weka/classifiers/trees/AlternatingModelTree.java
+
+Updated for changes to IterativeClssifier and to support resumable training
+------------------------------------------------------------------------
+r15034 | eibe | 2018-11-19 15:39:22 +1300 (Mon, 19 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/external/stackingC/Description.props
+   M /trunk/packages/external/stackingC/src/main/java/weka/classifiers/meta/StackingC.java
+
+Now supports multi-threading. Now also supports efficient batch prediction if base learners or meta learner provide this. No longer inherits from Stacking (to maintain backwards compatibility).
+------------------------------------------------------------------------
+r15035 | mhall | 2018-11-19 16:14:56 +1300 (Mon, 19 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/external/stackingC/build_package.xml
+
+Added package property to build file
+------------------------------------------------------------------------
+r15037 | mhall | 2018-11-19 16:21:00 +1300 (Mon, 19 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/external/stackingC/pom.xml
+
+[maven-release-plugin] prepare release stackingC-1.0.4
+------------------------------------------------------------------------
+r15039 | mhall | 2018-11-19 16:21:03 +1300 (Mon, 19 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/external/stackingC/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------
+r15040 | eibe | 2018-11-19 18:08:30 +1300 (Mon, 19 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/multiInstanceFilters/Description.props
+   M /trunk/packages/internal/multiInstanceFilters/src/main/java/weka/filters/unsupervised/attribute/PropositionalToMultiInstance.java
+   M /trunk/packages/internal/multiInstanceFilters/src/test/java/weka/filters/unsupervised/attribute/PropositionalToMultiInstanceTest.java
+
+PropositionalToMultiInstance no longer inserts an empty relational attribute when there is no actual data for the relational attribute.
+------------------------------------------------------------------------
+r15041 | eibe | 2018-11-20 13:26:50 +1300 (Tue, 20 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeSeriesFilters/Description.props
+   M /trunk/packages/internal/timeSeriesFilters/src/main/java/weka/filters/unsupervised/timeseries/PAATransformer.java
+   M /trunk/packages/internal/timeSeriesFilters/src/main/java/weka/filters/unsupervised/timeseries/SAXTransformer.java
+
+Fixed bug where filtering did not work when the relation name of the nested relation did not match the name of the relation-valued attribute. Also implemented some efficiency improvements by replacing setValue() calls.
+------------------------------------------------------------------------
+r15042 | eibe | 2018-11-20 13:30:14 +1300 (Tue, 20 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/multiInstanceFilters/src/main/java/weka/filters/unsupervised/attribute/PropositionalToMultiInstance.java
+
+Inner relation name is now the same as the name of the corresponding attribute, just "bag".
+------------------------------------------------------------------------
+r15047 | mhall | 2018-11-22 15:01:47 +1300 (Thu, 22 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeseriesForecasting/src/main/java/weka/filters/supervised/attribute/TSLagMaker.java
+
+No longer throws an exception about unset fields to lag in the GUI now (which was caused by changes to how the GOE copies objects)
+------------------------------------------------------------------------
+r15049 | eibe | 2018-11-23 12:16:25 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeSeriesFilters/Description.props
+   M /trunk/packages/internal/timeSeriesFilters/src/main/java/weka/filters/unsupervised/timeseries/FlatToRelational.java
+   M /trunk/packages/internal/timeSeriesFilters/src/main/java/weka/filters/unsupervised/timeseries/OneDimensionalTimeSeriesToString.java
+   M /trunk/packages/internal/timeSeriesFilters/src/main/java/weka/filters/unsupervised/timeseries/PAATransformer.java
+   M /trunk/packages/internal/timeSeriesFilters/src/main/java/weka/filters/unsupervised/timeseries/SAXTransformer.java
+   M /trunk/packages/internal/timeSeriesFilters/src/test/java/weka/filters/unsupervised/timeseries/FlatToRelationalTest.java
+
+Fixed bug where filtering did not work when the relation name of the nested relation did not match the name of the relation-valued attribute. Also implemented some efficiency improvements. Added FlatToRelational.
+------------------------------------------------------------------------
+r15050 | mhall | 2018-11-23 13:59:58 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/multiInstanceFilters/build_package.xml
+
+Added package property to build script
+------------------------------------------------------------------------
+r15055 | mhall | 2018-11-23 14:07:50 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/multiInstanceFilters/pom.xml
+
+[maven-release-plugin] prepare release multiInstanceFilters-1.0.10
+------------------------------------------------------------------------
+r15057 | mhall | 2018-11-23 14:07:53 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/multiInstanceFilters/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------
+r15059 | mhall | 2018-11-23 14:23:09 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeSeriesFilters/src/test/java/weka/filters/unsupervised/timeseries/FlatToRelationalTest.java
+   M /trunk/packages/internal/timeSeriesFilters/src/test/java/weka/filters/unsupervised/timeseries/OneDimensionalTimeSeriesToStringTest.java
+
+These test cases were missing main() and suite() methods
+------------------------------------------------------------------------
+r15060 | mhall | 2018-11-23 15:08:27 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeSeriesFilters/build_package.xml
+
+Added .ref files to the fileset to be copied into build/testcases
+------------------------------------------------------------------------
+r15065 | mhall | 2018-11-23 15:22:18 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeSeriesFilters/pom.xml
+
+Updated java source and target versions in pom
+------------------------------------------------------------------------
+r15066 | mhall | 2018-11-23 15:28:59 +1300 (Fri, 23 Nov 2018) | 1 line
+Changed paths:
+   M /trunk/packages/internal/timeSeriesFilters/Description.props
+
+Fixed PackageURL entry
+------------------------------------------------------------------------
+r15086 | mhall | 2019-01-11 11:42:34 +1300 (Fri, 11 Jan 2019) | 1 line
+Changed paths:
+   M /trunk/packages/internal/wekaPython/src/main/java/weka/classifiers/sklearn/ScikitLearnClassifier.java
+
+Now includes xgboost for classification and regression. xgboost is *not* included with scikit-learn, so this requires the xgboost package to be installed in python. However, it does have a sklearn API. Also changed learner enum to specify a new boolean to control whether or not the model variable should be cleared in python after training and each call to distributionsForInstances. This allows conservation of memory on the host and potentially on devices (e.g. xgboost compiled for GPU). The downside is an overhead with transmitting the model back into python for each batch prediction. This only applies to the xgboost classifier/regressor at present so that GPU memory is freed (especially an issue if performing x-val).
+------------------------------------------------------------------------
+r15088 | mhall | 2019-01-11 11:47:13 +1300 (Fri, 11 Jan 2019) | 1 line
+Changed paths:
+   M /branches/stable-3-8/packages/internal/wekaPython/Description.props
+   M /trunk/packages/internal/wekaPython/Description.props
+
+Updated Description.props
+------------------------------------------------------------------------
+r15089 | eibe | 2019-01-21 14:24:39 +1300 (Mon, 21 Jan 2019) | 1 line
+Changed paths:
+   M /trunk/packages/external/kfGroovy/Description.props
+   A /trunk/packages/external/kfGroovy/lib/groovy-2.5.5.jar
+   D /trunk/packages/external/kfGroovy/lib/groovy-all-2.4.6.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-ant-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-cli-commons-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-cli-picocli-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-console-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-datetime-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-docgenerator-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-groovydoc-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-groovysh-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-jmx-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-json-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-jsr223-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-macro-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-nio-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-servlet-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-sql-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-swing-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-templates-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-test-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-test-junit5-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-testng-2.5.5.jar
+   A /trunk/packages/external/kfGroovy/lib/groovy-xml-2.5.5.jar
+   M /trunk/packages/external/kfGroovy/pom.xml
+
+Upgraded to Groovy 2.5.5.
+------------------------------------------------------------------------
+r15096 | mhall | 2019-02-04 15:47:40 +1300 (Mon, 04 Feb 2019) | 1 line
+Changed paths:
+   M /trunk/packages/external/scatterPlot3D/pom.xml
+
+[maven-release-plugin] prepare release scatterPlot3D-1.0.7
+------------------------------------------------------------------------
+r15098 | mhall | 2019-02-04 15:47:42 +1300 (Mon, 04 Feb 2019) | 1 line
+Changed paths:
+   M /trunk/packages/external/scatterPlot3D/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------
+r15099 | mhall | 2019-02-04 15:48:23 +1300 (Mon, 04 Feb 2019) | 1 line
+Changed paths:
+   M /trunk/packages/external/scatterPlot3D/pom.xml
+
+[maven-release-plugin] rollback the release of scatterPlot3D-1.0.7
+------------------------------------------------------------------------
+r15100 | mhall | 2019-02-04 15:51:49 +1300 (Mon, 04 Feb 2019) | 1 line
+Changed paths:
+   M /trunk/packages/external/scatterPlot3D/pom.xml
+
+[maven-release-plugin] prepare release scatterPlot3D-1.0.7
+------------------------------------------------------------------------
+r15102 | mhall | 2019-02-04 15:51:52 +1300 (Mon, 04 Feb 2019) | 1 line
+Changed paths:
+   M /trunk/packages/external/scatterPlot3D/pom.xml
+
+[maven-release-plugin] prepare for next development iteration
+------------------------------------------------------------------------

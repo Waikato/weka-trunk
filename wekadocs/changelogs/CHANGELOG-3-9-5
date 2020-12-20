@@ -1,0 +1,354 @@
+------------------------------------------------------------------------
+r15485 | mhall | 2019-12-20 13:20:24 +1300 (Fri, 20 Dec 2019) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/knowledgeflow/steps/StripChartInteractiveView.java
+
+Fixed an npe that would occur if the window was closed while accepting data points
+------------------------------------------------------------------------
+r15504 | mhall | 2019-12-20 16:55:18 +1300 (Fri, 20 Dec 2019) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/version.txt
+
+Version 3.9.4 for the release
+------------------------------------------------------------------------
+r15516 | mhall | 2019-12-20 17:09:28 +1300 (Fri, 20 Dec 2019) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/version.txt
+
+Version number bumped
+------------------------------------------------------------------------
+r15517 | eibe | 2019-12-24 13:40:26 +1300 (Tue, 24 Dec 2019) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/attributeSelection/ASEvaluation.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ASSearch.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/BestFirst.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/CfsSubsetEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/CheckAttributeSelection.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ClassifierAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ClassifierSubsetEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/CorrelationAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/GainRatioAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/GreedyStepwise.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/HoldOutSubsetEvaluator.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/InfoGainAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/OneRAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/PrincipalComponents.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/Ranker.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ReliefFAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/SymmetricalUncertAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/WrapperSubsetEval.java
+
+ASEvaluation and ASSearch now implement OptionHandler interface and descendant classes can now use the @OptionMetaData tag to add command-line option handling. Tidied up option handling in sub classes. Fixed typos.
+------------------------------------------------------------------------
+r15519 | eibe | 2019-12-24 21:48:27 +1300 (Tue, 24 Dec 2019) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/associations/AbstractAssociator.java
+   M /trunk/weka/src/main/java/weka/associations/Apriori.java
+   M /trunk/weka/src/main/java/weka/associations/FPGrowth.java
+   M /trunk/weka/src/main/java/weka/associations/SingleAssociatorEnhancer.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ASEvaluation.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ASSearch.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/BestFirst.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/CfsSubsetEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ClassifierAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ClassifierSubsetEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/CorrelationAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/GainRatioAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/GreedyStepwise.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/InfoGainAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/OneRAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/PrincipalComponents.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/Ranker.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/ReliefFAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/SymmetricalUncertAttributeEval.java
+   M /trunk/weka/src/main/java/weka/attributeSelection/WrapperSubsetEval.java
+   M /trunk/weka/src/main/java/weka/classifiers/AbstractClassifier.java
+   M /trunk/weka/src/main/java/weka/classifiers/SingleClassifierEnhancer.java
+   M /trunk/weka/src/main/java/weka/classifiers/bayes/BayesNet.java
+   M /trunk/weka/src/main/java/weka/classifiers/bayes/NaiveBayes.java
+   M /trunk/weka/src/main/java/weka/classifiers/bayes/NaiveBayesMultinomialText.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/GaussianProcesses.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/LinearRegression.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/Logistic.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/MultilayerPerceptron.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SGD.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SGDText.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SMO.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SMOreg.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SimpleLinearRegression.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SimpleLogistic.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/VotedPerceptron.java
+   M /trunk/weka/src/main/java/weka/classifiers/lazy/IBk.java
+   M /trunk/weka/src/main/java/weka/classifiers/lazy/KStar.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/AdaBoostM1.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/AdditiveRegression.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/AttributeSelectedClassifier.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/Bagging.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/CVParameterSelection.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/CostSensitiveClassifier.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/FilteredClassifier.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/IterativeClassifierOptimizer.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/LogitBoost.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/MultiClassClassifier.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RandomSubSpace.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RegressionByDiscretization.java
+   M /trunk/weka/src/main/java/weka/classifiers/misc/SerializedClassifier.java
+   M /trunk/weka/src/main/java/weka/classifiers/rules/DecisionTable.java
+   M /trunk/weka/src/main/java/weka/classifiers/rules/JRip.java
+   M /trunk/weka/src/main/java/weka/classifiers/trees/HoeffdingTree.java
+   M /trunk/weka/src/main/java/weka/classifiers/trees/J48.java
+   M /trunk/weka/src/main/java/weka/classifiers/trees/LMT.java
+   M /trunk/weka/src/main/java/weka/classifiers/trees/REPTree.java
+   M /trunk/weka/src/main/java/weka/classifiers/trees/RandomTree.java
+   M /trunk/weka/src/main/java/weka/classifiers/trees/m5/M5Base.java
+   M /trunk/weka/src/main/java/weka/clusterers/AbstractClusterer.java
+   M /trunk/weka/src/main/java/weka/clusterers/Cobweb.java
+   M /trunk/weka/src/main/java/weka/clusterers/EM.java
+   M /trunk/weka/src/main/java/weka/clusterers/FarthestFirst.java
+   M /trunk/weka/src/main/java/weka/clusterers/FilteredClusterer.java
+   M /trunk/weka/src/main/java/weka/clusterers/HierarchicalClusterer.java
+   M /trunk/weka/src/main/java/weka/clusterers/MakeDensityBasedClusterer.java
+   M /trunk/weka/src/main/java/weka/clusterers/SimpleKMeans.java
+   M /trunk/weka/src/main/java/weka/clusterers/SingleClustererEnhancer.java
+
+Some tidying up of command-line option handling of classifiers, associators, clusterers, and attribute selection. The idea is that the most abstract super class in these class hierarchies calls checkForRemainingOptions() at the end of setOptions(). Sub classes, if they implement setOptions(), should just call super.setOptions() as the last statement in setOptions() and not call checkForRemainingOptions() themselves.
+------------------------------------------------------------------------
+r15521 | eibe | 2019-12-29 17:54:19 +1300 (Sun, 29 Dec 2019) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/estimators/CheckEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/DDConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/DKConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/DNConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/DiscreteEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/Estimator.java
+   M /trunk/weka/src/main/java/weka/estimators/EstimatorUtils.java
+   M /trunk/weka/src/main/java/weka/estimators/KDConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/KKConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/KernelEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/MahalanobisEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/NDConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/NNConditionalEstimator.java
+   M /trunk/weka/src/main/java/weka/estimators/NormalEstimator.java
+
+Added default constructors. Fixed bugs in class-conditional addValues() methods in Estimator class (unused in core WEKA code). Added core OptionHandler methods to Estimator class. Improved Javadoc. KernelEstimator now rounds argument value in getProbability() to be consistent with NormalEstimator. Both, KernelEstimator and NormalEstimator, now return a density estimate that integrates to one via getProbability(). Small changes in the results of NaiveBayes result because of the rounding when the kernel density estimator is applied in NaiveBayes. Bug fix in KKConditionalEstimator: scale of kernels for non-evidence variable is now reasonable because weights are rescaled before being passed to the corresponding estimator. Also, rounding is applied in getEstimator() for consistency with KernelEstimator and NormalEstimator. Bug fix in MahalanobisEstimator: square root was applied incorrectly in normalization term. Bug fix in NNConditionalEstimator: now, it does actually compute the conditional density rather than the joint density! Apart from the change to rounding in KernelEstimator, none of the other changes and bug fixes should have an effect on core WEKA because this other functionality does not appear to be used anywhere.
+------------------------------------------------------------------------
+r15528 | eibe | 2020-02-17 18:40:02 +1300 (Mon, 17 Feb 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/filters/unsupervised/attribute/RenameNominalValues.java
+
+A few bug fixes primarily relating to cases where new values already existed in the nominal attribute concerned or the position of an attribute value had shifted because renaming caused a value to disappear. Improved efficiency by replacing getOutputFormat() with outputFormatPeek() where appropriate and introducing a hashset to check for presence of a value. Filter was not initialised correctly when reused because hash map was not initialised in setInputFormat().
+------------------------------------------------------------------------
+r15530 | eibe | 2020-02-18 11:09:38 +1300 (Tue, 18 Feb 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/filters/unsupervised/attribute/RenameNominalValues.java
+
+Bug fixes and code simplification.
+------------------------------------------------------------------------
+r15532 | eibe | 2020-02-21 18:55:42 +1300 (Fri, 21 Feb 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/functions/Logistic.java
+   M /trunk/weka/src/main/java/weka/core/Optimization.java
+
+Fixed bug in line search in Optimization.java (hopefully) that could cause convergence problems in conjugate gradient descent in rare cases. Added option to Logistic (logistic regression) to turn off standardization of attributes (which is performed by default).
+------------------------------------------------------------------------
+r15534 | eibe | 2020-02-22 00:23:46 +1300 (Sat, 22 Feb 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/functions/Logistic.java
+
+Fixed tool tip.
+------------------------------------------------------------------------
+r15543 | mhall | 2020-03-31 16:34:04 +1300 (Tue, 31 Mar 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/WekaPackageManager.java
+
+startupCheck() was not honoring the offline flag - fixed
+------------------------------------------------------------------------
+r15559 | eibe | 2020-04-17 20:13:17 +1200 (Fri, 17 Apr 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RandomCommittee.java
+
+RandomCommittee performed resampling whenever the base learner did not implement WeightedInstancesHandler, regardless of whether the training data had uniform weights or not. Fixed now: resampling will now be performed only if the base learner does not implement WeightedInstancesHandler *and* the instance weights are not all equal.
+------------------------------------------------------------------------
+r15561 | eibe | 2020-05-02 15:22:19 +1200 (Sat, 02 May 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/functions/SMO.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/supportVector/NormalizedPolyKernel.java
+   M /trunk/weka/src/main/java/weka/classifiers/functions/supportVector/RegOptimizer.java
+
+Speed improvements to NormalizedPolyKernel. Changed check for linear model in RegOptimizer and SMO so that it is now possible to run the NormalizedPolyKernel with exponent 1.
+------------------------------------------------------------------------
+r15563 | mhall | 2020-05-04 12:03:19 +1200 (Mon, 04 May 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Option.java
+
+Added code to handle setting an array option that has element types other than File or OptionHandler
+------------------------------------------------------------------------
+r15569 | eibe | 2020-05-06 14:42:02 +1200 (Wed, 06 May 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Instances.java
+   M /trunk/weka/src/main/java/weka/core/Utils.java
+
+Tidied up some error messages generated by the Instances class.
+------------------------------------------------------------------------
+r15571 | eibe | 2020-05-06 18:59:13 +1200 (Wed, 06 May 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/ComponentHelper.java
+   M /trunk/weka/src/main/java/weka/gui/arffviewer/ArffTableModel.java
+
+A notification is now being popped up by ArffTableModel when the user tries to rename an attribute and the name already exists in another attribute.
+------------------------------------------------------------------------
+r15573 | mhall | 2020-05-11 11:28:44 +1200 (Mon, 11 May 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/DictionaryBuilder.java
+   M /trunk/weka/src/main/java/weka/filters/unsupervised/attribute/FixedDictionaryStringToWordVector.java
+
+Fixed some bugs in DictionaryBuilder and FixedDictionaryStringToWordVector. DictionaryBuilder now writes the total document count into the dictionary file (both text and binary forms) in order to facilitate output of TF-IDF values. Loading a binary dictionary was not setting the output format - fixed. Fixed some option handling in FixedDictionaryStringToWordVectory. For meaningful error messages with existing dictionary files now prints an exception if TF-IDF is requested, but the total document count is not available in the dictionary file
+------------------------------------------------------------------------
+r15581 | mhall | 2020-05-26 14:07:58 +1200 (Tue, 26 May 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/knowledgeflow/FlowRunner.java
+   M /trunk/weka/src/main/java/weka/knowledgeflow/steps/Sorter.java
+
+Fixed some logging output in the Sorter step. Also added a check to ensure that the user has added at least one sorting rule to the list (otherwise a cryptic exception relating to a class not implementing Comparable is generated). FlowRunner now sets the environment variable Internal.knowledgeflow.directory when executed from the command line.
+------------------------------------------------------------------------
+r15589 | mhall | 2020-06-12 16:18:59 +1200 (Fri, 12 Jun 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/OptionMetadata.java
+
+Updated javadoc to make it clear that command-line option details must be specified for objects that will be edited by the GenericObjectEditor
+------------------------------------------------------------------------
+r15595 | mhall | 2020-07-27 14:28:26 +1200 (Mon, 27 Jul 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/packageManagement/DefaultPackageManager.java
+
+Now cleans any pre-existing installed package when installing from a zip file
+------------------------------------------------------------------------
+r15599 | mhall | 2020-08-10 11:54:12 +1200 (Mon, 10 Aug 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/WorkbenchApp.java
+   M /trunk/weka/src/main/java/weka/gui/knowledgeflow/KnowledgeFlowApp.java
+
+Fixed a bug that can cause a npe under OSX when using LAFs that differ from Aqua
+------------------------------------------------------------------------
+r15607 | eibe | 2020-08-10 15:43:37 +1200 (Mon, 10 Aug 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/knowledgeflow/FlowRunner.java
+
+Removed unused import statement that broke compilation with JDK 11 in IntelliJ.
+------------------------------------------------------------------------
+r15625 | eibe | 2020-08-25 17:14:41 +1200 (Tue, 25 Aug 2020) | 1 line
+Changed paths:
+   M /trunk/weka/lib/README
+   D /trunk/weka/lib/jflex-full-1.7.0.jar
+   A /trunk/weka/lib/jflex-full-1.8.2.jar
+   M /trunk/weka/src/main/java/weka/core/expressionlanguage/parser/Scanner.java
+   M /trunk/weka/src/main/java/weka/core/json/Scanner.java
+
+Updated jflex library .jar to 1.8.2 and regenerated the two Parser.java files in WEKA using this new version. This was done by running ant on the parsers.xml file.
+------------------------------------------------------------------------
+r15651 | mhall | 2020-11-20 09:43:07 +1300 (Fri, 20 Nov 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/experiment/DatabaseUtils.props.mysql
+
+Updated database URL to include the parameter nullDatabaseMeansCurrent=true. This maintains the behaviour of returning current database metadata as seen in drivers prior to version 5.1.47.
+------------------------------------------------------------------------
+r15656 | fracpete | 2020-11-29 13:37:16 +1300 (Sun, 29 Nov 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/converters/ConverterResources.java
+   M /trunk/weka/src/main/java/weka/core/converters/ConverterUtils.java
+   M /trunk/weka/src/main/java/weka/gui/ConverterFileChooser.java
+   A /trunk/weka/src/main/java/weka/gui/ExtensionFileFilterWithClass.java
+
+multiple converters can be associated with a single extension now, enabling alternative converters in the ConverterFileChooser
+------------------------------------------------------------------------
+r15670 | mhall | 2020-12-07 12:02:27 +1300 (Mon, 07 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Copyright.props
+
+Updated year
+------------------------------------------------------------------------
+r15674 | mhall | 2020-12-08 11:06:30 +1300 (Tue, 08 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/knowledgeflow/steps/Classifier.java
+
+Added a extra line of logging
+------------------------------------------------------------------------
+r15678 | mhall | 2020-12-08 11:12:14 +1300 (Tue, 08 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/explorer/AssociationsPanel.java
+   M /trunk/weka/src/main/java/weka/gui/explorer/PreprocessPanel.java
+
+Preprocess panel now unsets any class attribute after applying a filter. Associate panel now always unsets class attribute before running associator
+------------------------------------------------------------------------
+r15682 | mhall | 2020-12-08 12:45:26 +1300 (Tue, 08 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/explorer/PreprocessPanel.java
+
+Now unsets class for generated instances. This is now consistent with filter usage in the PreprocessPanel
+------------------------------------------------------------------------
+r15686 | mhall | 2020-12-14 12:30:36 +1300 (Mon, 14 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/datagenerators/ClusterGenerator.java
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceClusterDefinition.java
+
+Fixed some option handling issues
+------------------------------------------------------------------------
+r15690 | eibe | 2020-12-15 12:26:32 +1300 (Tue, 15 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/GUIEditors.props
+
+New, trivial, RangeEditor, added for completeness.
+------------------------------------------------------------------------
+r15691 | eibe | 2020-12-15 13:00:41 +1300 (Tue, 15 Dec 2020) | 1 line
+Changed paths:
+   A /trunk/weka/src/main/java/weka/gui/RangeEditor.java
+
+Simple, trivial editor for Range objects.
+------------------------------------------------------------------------
+r15694 | mhall | 2020-12-15 16:20:21 +1300 (Tue, 15 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Option.java
+
+Changes to allow for empty strings for OptionMetadata-specified string options
+------------------------------------------------------------------------
+r15695 | eibe | 2020-12-15 17:08:27 +1300 (Tue, 15 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Utils.java
+
+joinOptions() now no longer skips empty strings in the incoming string array. Instead, they produce "" in the output string.
+------------------------------------------------------------------------
+r15696 | eibe | 2020-12-15 17:13:42 +1300 (Tue, 15 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Utils.java
+
+Bug fix: break should be continue.
+------------------------------------------------------------------------
+r15700 | mhall | 2020-12-18 09:37:56 +1300 (Fri, 18 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Option.java
+   M /trunk/weka/src/main/java/weka/core/Utils.java
+
+Reverting changes for allowing empty option strings in Option and Utils.joinOptions()
+------------------------------------------------------------------------
+r15701 | mhall | 2020-12-18 09:38:38 +1300 (Fri, 18 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/PluginManager.java
+
+Fixed a potential npe
+------------------------------------------------------------------------
+r15705 | eibe | 2020-12-18 18:56:40 +1300 (Fri, 18 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/datagenerators/ClusterDefinition.java
+   M /trunk/weka/src/main/java/weka/datagenerators/ClusterGenerator.java
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/BIRCHCluster.java
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceCluster.java
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceClusterDefinition.java
+
+Many fixes to SubspaceCluster generator and related classes. No longer backwards compatible because unused noise parameter has been removed (this also affects BIRCHCluster). Totally uniform generation of integer values still broken. Totally uniform generation of of real values on a grid works now (it did not work as intended before) but the distribution is not ideal when number of samples does not yield an integer n-th root.
+------------------------------------------------------------------------
+r15706 | eibe | 2020-12-18 22:43:36 +1300 (Fri, 18 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceCluster.java
+
+Generation of totally uniform integer values should also work now.
+------------------------------------------------------------------------
