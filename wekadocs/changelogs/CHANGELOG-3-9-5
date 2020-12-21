@@ -1,16 +1,4 @@
 ------------------------------------------------------------------------
-r15485 | mhall | 2019-12-20 13:20:24 +1300 (Fri, 20 Dec 2019) | 1 line
-Changed paths:
-   M /trunk/weka/src/main/java/weka/gui/knowledgeflow/steps/StripChartInteractiveView.java
-
-Fixed an npe that would occur if the window was closed while accepting data points
-------------------------------------------------------------------------
-r15504 | mhall | 2019-12-20 16:55:18 +1300 (Fri, 20 Dec 2019) | 1 line
-Changed paths:
-   M /trunk/weka/src/main/java/weka/core/version.txt
-
-Version 3.9.4 for the release
-------------------------------------------------------------------------
 r15516 | mhall | 2019-12-20 17:09:28 +1300 (Fri, 20 Dec 2019) | 1 line
 Changed paths:
    M /trunk/weka/src/main/java/weka/core/version.txt
@@ -351,4 +339,10 @@ Changed paths:
    M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceCluster.java
 
 Generation of totally uniform integer values should also work now.
+------------------------------------------------------------------------
+r15714 | mhall | 2020-12-21 12:46:50 +1300 (Mon, 21 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/version.txt
+
+Version bump prior to maven release
 ------------------------------------------------------------------------
