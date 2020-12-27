@@ -21,9 +21,6 @@
 
 package weka.classifiers.evaluation;
 
-import java.util.ArrayList;
-
-import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
@@ -31,6 +28,8 @@ import weka.core.Instances;
 import weka.core.RevisionHandler;
 import weka.core.RevisionUtils;
 import weka.core.Utils;
+
+import java.util.ArrayList;
 
 /**
  * Generates points illustrating prediction tradeoffs that can be obtained by
@@ -474,37 +473,5 @@ public class ThresholdCurve implements RevisionHandler {
   @Override
   public String getRevision() {
     return RevisionUtils.extract("$Revision$");
-  }
-
-  /**
-   * Tests the ThresholdCurve generation from the command line. The classifier
-   * is currently hardcoded. Pipe in an arff file.
-   * 
-   * @param args currently ignored
-   */
-  public static void main(String[] args) {
-
-    try {
-
-      Instances inst = new Instances(new java.io.InputStreamReader(System.in));
-      if (0 != Math.log(1)) { // false
-        System.out.println(ThresholdCurve.getNPointPrecision(inst, 11));
-      } else if (3 != 1 + 1) { // true
-        inst.setClassIndex(inst.numAttributes() - 1);
-        ThresholdCurve tc = new ThresholdCurve();
-        EvaluationUtils eu = new EvaluationUtils();
-        Classifier classifier = new weka.classifiers.functions.Logistic();
-        ArrayList<Prediction> predictions = new ArrayList<Prediction>();
-        for (int i = 0; i < 2; i++) { // Do two runs.
-          eu.setSeed(i);
-          predictions.addAll(eu.getCVPredictions(classifier, inst, 10));
-          // System.out.println("\n\n\n");
-        }
-        Instances result = tc.getCurve(predictions);
-        System.out.println(result);
-      }
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
   }
 }
