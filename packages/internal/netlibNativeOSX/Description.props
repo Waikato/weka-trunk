@@ -42,7 +42,7 @@ URL=http://weka.sourceforge.net/doc.packages/netlibNativeOSX
 # Related to other packages?
 #Related=
 
-Precludes=netlibNativeWindows,netlibNativeLinux
+Precludes=netlibNativeWindows,netlibNativeLinux,netlibNativeOSXarm
 
 # Jar files containing native libraries (; separated list of jar/zip:lib-path,lib-path,...)
 NativeLibs=lib/netlib-native_ref-osx-x86_64-1.1-natives.jar:netlib-native_ref-osx-x86_64.jnilib;lib/netlib-native_system-osx-x86_64-1.1-natives.jar:netlib-native_system-osx-x86_64.jnilib

@@ -42,7 +42,7 @@ URL=http://weka.sourceforge.net/doc.packages/netlibNativeLinux
 # Related to other packages?
 #Related=
 
-Precludes=netlibNativeOSX,netlibNativeWindows
+Precludes=netlibNativeOSX,netlibNativeWindows,netlibNativeOSXarm
 
 # Jar files containing native libraries (; separated list of jar/zip:lib-path,lib-path,...)
 NativeLibs=lib/netlib-native_ref-linux-armhf-1.1-natives.jar:netlib-native_ref-linux-armhf.so;lib/netlib-native_ref-linux-i686-1.1-natives.jar:netlib-native_ref-linux-i686.so;lib/netlib-native_ref-linux-x86_64-1.1-natives.jar:netlib-native_ref-linux-x86_64.so;lib/netlib-native_system-linux-armhf-1.1-natives.jar:netlib-native_system-linux-armhf.so;lib/netlib-native_system-linux-i686-1.1-natives.jar:netlib-native_system-linux-i686.so;lib/netlib-native_system-linux-x86_64-1.1-natives.jar:netlib-native_system-linux-x86_64.so
