@@ -33,14 +33,14 @@ import weka.filters.SimpleBatchFilter;
 /**
  <!-- globalinfo-start -->
  * Implements Fisher's linear discriminant analysis for dimensionality reduction. Note that this implementation
- * adds the value of the ridge parameter to the diagonal of the pooled within-class scatter matrix.
+ * adds the value of the ridge parameter to the diagonal of the scatter matrices.
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
  * Valid options are: <p/>
  *
  * <pre> -R
- *  The ridge parameter to add to the diagonal of the pooled within-class scatter matrix.
+ *  The ridge parameter to add to the diagonal of the scatter matrices.
  *  (default is 1e-6)</pre>
  *
  <!-- options-end -->
@@ -92,7 +92,7 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
   public String globalInfo() {
 
     return "Implements Fisher's linear discriminant analysis for dimensionality reduction. Note that this implementation " +
-            "adds the value of the ridge parameter to the diagonal of the pooled within-class scatter matrix.";
+            "adds the value of the ridge parameter to the diagonal of the scatter matrices.";
   }
 
   /**
@@ -103,7 +103,7 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
    */
   public String ridgeTipText() {
 
-    return "The ridge parameter to add to the diagonal of the pooled within-class scatter matrix.";
+    return "The ridge parameter to add to the diagonal of the scatter matrices.";
   }
 
   /**
@@ -136,7 +136,7 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
     java.util.Vector<Option> newVector = new java.util.Vector<Option>(7);
 
     newVector.addElement(new Option(
-            "\tThe ridge parameter to add to the diagonal of the pooled within-class scatter matrix.\n"+
+            "\tThe ridge parameter to add to the diagonal of the scatter matrices.\n"+
                     "\t(default is 1e-6)",
             "R", 0, "-R"));
 
@@ -152,7 +152,7 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
    * Valid options are: <p/>
    *
    * <pre> -R
-   *  The ridge parameter to add to the diagonal of the pooled within-class scatter matrix.
+   *  The ridge parameter to add to the diagonal of the scatter matrices.
    *  (default is 1e-6)</pre>
   *
    * <!-- options-end -->
@@ -206,31 +206,44 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
    */
   protected Vector computeMean(Instances data, double[] totalWeight, int aI) {
 
-    Vector meanVector = new DenseVector(data.numAttributes() - 1);
+    int m = data.numAttributes() - 1;
+    double[] mean = new double[m];
     totalWeight[aI] = 0;
     for (Instance inst : data) {
-      if (!inst.classIsMissing()) {
-        meanVector.add(inst.weight(), instanceToVector(inst));
-        totalWeight[aI] += inst.weight();
+      int classIndex = (int) inst.classIndex();
+      double weight = inst.weight();
+      for (int i = 0; i < classIndex; i++) {
+        mean[i] += weight * inst.value(i);
       }
+      for (int i = classIndex; i < m; i++) {
+        mean[i] += weight * inst.value(i + 1);
+      }
+      totalWeight[aI] += inst.weight();
     }
+    Vector meanVector = new DenseVector(mean);
     meanVector.scale(1.0 / totalWeight[aI]);
     return meanVector;
   }
 
   /**
-   * Turns an instance with a class into a vector without a class.
+   * Turns instances into a matrix without the class attribute.
    */
-  protected Vector instanceToVector(Instance inst) {
+  protected Matrix instancesToMatrix(Instances insts) {
 
-    Vector v = new DenseVector(inst.numAttributes() - 1);
-    int index = 0;
-    for (int i = 0; i < inst.numAttributes(); i++) {
-      if (i != inst.classIndex()){
-        v.set(index++, inst.value(i));
+    int m = insts.numAttributes() - 1;
+    int n = insts.numInstances();
+    Matrix matrix = new DenseMatrix(m, n);
+    int classIndex = (int) insts.classIndex();
+    for (int j = 0; j < n; j++) {
+      Instance inst = insts.instance(j);
+      for (int i = 0; i < classIndex; i++) {
+        matrix.set(i, j, inst.value(i));
+      }
+      for (int i = classIndex; i < m; i++) {
+        matrix.set(i, j, inst.value(i + 1));
       }
     }
-    return v;
+    return matrix;
   }
 
   /**
@@ -243,51 +256,71 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
     @Override
     protected Instances determineOutputFormat(Instances inputFormat) throws Exception {
 
+      // Delete instances with missing class values
+      inputFormat = new Instances(inputFormat);
+      inputFormat.deleteWithMissingClass();
+
       // Determine number of attributes
       int m = inputFormat.numAttributes() - 1;
+
+      // Determine number of instances
+      int n = inputFormat.numInstances();
+
+      // Determine number of classes
+      int k = inputFormat.numClasses();
 
       // Compute global mean
       double[] totalWeight = new double[1];
       Vector globalMean = computeMean(inputFormat, totalWeight, 0);
 
       // Compute subset for each class
-      Instances[] subsets = new Instances[inputFormat.numClasses()];
+      Instances[] subsets = new Instances[k];
       for (int j = 0; j < subsets.length; j++) {
-        subsets[j] = new Instances(inputFormat, inputFormat.numInstances());
+        subsets[j] = new Instances(inputFormat, n);
       }
       for (Instance inst : inputFormat) {
-        if (!inst.classIsMissing()) {
-          subsets[(int) inst.classValue()].add(inst);
-        }
+        subsets[(int) inst.classValue()].add(inst);
       }
 
       // Compute mean vector and weight for each class
-      Vector[] perClassMeans = new DenseVector[inputFormat.numClasses()];
-      double[] perClassWeights = new double[inputFormat.numClasses()];
-      for (int i = 0; i < inputFormat.numClasses(); i++) {
+      Vector[] perClassMeans = new DenseVector[k];
+      double[] perClassWeights = new double[k];
+      for (int i = 0; i < k; i++) {
         perClassMeans[i] = computeMean(subsets[i], perClassWeights, i);
       }
 
       // Compute within-class scatter matrix
-      Matrix Cw = new UpperSymmDenseMatrix(m);
-      for (Instance inst : inputFormat) {
-        if (!inst.classIsMissing()) {
-          Vector diff = instanceToVector(inst);
-          diff = diff.add(-1.0, perClassMeans[(int) inst.classValue()]);
-          Cw = Cw.rank1(inst.weight(), diff);
+      Matrix tempMatrix = new DenseMatrix(m, n);
+      for (int j = 0; j < n; j++) {
+        Instance inst = inputFormat.instance(j);
+        int classIndex = (int) inst.classIndex();
+        Vector classMean = perClassMeans[(int) inst.classValue()];
+        for (int i = 0; i < classIndex; i++) {
+          tempMatrix.set(i, j, inst.value(i) - classMean.get(i));
+        }
+        for (int i = classIndex; i < m; i++) {
+          tempMatrix.set(i, j, inst.value(i + 1) - classMean.get(i));
         }
       }
+      Matrix Cw = (new UpperSPDDenseMatrix(m)).rank1(tempMatrix);
 
       // Add ridge to pooled within-class scatter matrix
-      for (int i = 0; i < Cw.numColumns(); i++) {
+      for (int i = 0; i < m; i++) {
         Cw.add(i, i, m_Ridge);
       }
+
       // Compute between-class scatter matrix
-      Matrix Cb = new UpperSymmDenseMatrix(m);
-      for (int i = 0; i < inputFormat.numClasses(); i++) {
-        Vector diff = perClassMeans[i].copy();
-        diff = diff.add(-1.0, globalMean);
-        Cb = Cb.rank1(perClassWeights[i], diff);
+      tempMatrix = new DenseMatrix(m, k);
+      for (int j = 0; j < k; j++) {
+        for (int i = 0; i < m; i++) {
+          tempMatrix.set(i, j, perClassMeans[j].get(i) - globalMean.get(i));
+        }
+      }
+      Matrix Cb = (new UpperSPDDenseMatrix(m)).rank1(tempMatrix);
+
+      // Add ridge to pooled within-class scatter matrix
+      for (int i = 0; i < m; i++) {
+        Cb.add(i, i, m_Ridge);
       }
 
       if (m_Debug) {
@@ -296,28 +329,27 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
       }
 
       // Compute square root of inverse within-class scatter matrix
-      SymmDenseEVD evdCw = SymmDenseEVD.factorize(Cw);
-      Matrix evCw = evdCw.getEigenvectors();
-      double[] evs = evdCw.getEigenvalues();
+      SymmDenseEVD evd = SymmDenseEVD.factorize(Cw);
+      Matrix ev = evd.getEigenvectors();
+      double[] evs = evd.getEigenvalues();
+
+      if (m_Debug) {
+        System.err.println("ev : \n" + ev);
+        System.err.println("ev times evCwTransposed : \n" + ev.mult(ev.transpose(new DenseMatrix(m, m)), new DenseMatrix(m, m)));
+      }
 
       // Eigenvectors for Cw and its inverse are the same. Eigenvalues of inverse are reciprocal of evs of original.
-      Matrix D = new UpperSymmDenseMatrix(evs.length);
-      for (int i = 0; i < evs.length; i++) {
+      for (int i = 0; i < ev.numColumns(); i++) {
         if (evs[i] > 0) {
-          D.set(i, i, Math.sqrt(1.0 / evs[i]));
+          double multiplier = 1.0 / Math.pow(evs[i], 0.25);
+          for (int j = 0; j < ev.numRows(); j++) {
+            ev.set(j, i, ev.get(j, i) * multiplier);
+          }
         } else {
           throw new IllegalArgumentException("Found non-positive eigenvalue of within-class scatter matrix.");
         }
       }
-
-      if (m_Debug) {
-        System.err.println("evCw : \n" + evCw);
-        System.err.println("Sqrt of reciprocal of eigenvalues of Cw: \n" + D);
-        System.err.println("evCw times evCwTransposed : \n" + evCw.mult(evCw.transpose(new DenseMatrix(m,m)), new DenseMatrix(m, m)));
-      }
-
-      Matrix temp = evCw.mult(D, new DenseMatrix(m, m));
-      Matrix sqrtCwInverse = temp.mult(evCw.transpose(), new UpperSymmDenseMatrix(m));
+      Matrix sqrtCwInverse = new UpperSPDDenseMatrix(m).rank1(ev);
 
       if (m_Debug) {
         System.err.println("sqrtCwInverse : \n");
@@ -333,16 +365,47 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
         System.err.println("CwInverse : \n" + Cw.solve(I, CwInverse));
       }
 
+      evd = SymmDenseEVD.factorize(Cb);
+      ev = evd.getEigenvectors();
+      evs = evd.getEigenvalues();
+
+      if (m_Debug) {
+        System.err.println("ev : \n" + ev);
+        System.err.println("evs : \n");
+        for (int i = 0; i < evs.length; i++) {
+          System.out.print(evs[i] + " ");
+        }
+        System.out.println();
+        System.err.println("ev times evCwTransposed : \n" + ev.mult(ev.transpose(new DenseMatrix(m, m)), new DenseMatrix(m, m)));
+      }
+
+      // Use eigenvalue decomposition to compute square root of Cb
+      for (int i = 0; i < ev.numColumns(); i++) {
+        if (evs[i] > 0) {
+          double multiplier = Math.pow(evs[i], 0.25);
+          for (int j = 0; j < ev.numRows(); j++) {
+            ev.set(j, i, ev.get(j, i) * multiplier);
+          }
+        } else {
+          throw new IllegalArgumentException("Found non-positive eigenvalue of between-class scatter matrix.");
+        }
+      }
+      Matrix sqrtCb = new UpperSPDDenseMatrix(m).rank1(ev);
+
       // Compute symmetric matrix using square root
-      temp =  sqrtCwInverse.mult(Cb, new DenseMatrix(m, m));
-      Matrix symmMatrix = temp.mult(sqrtCwInverse, new UpperSymmDenseMatrix(m));
+      Matrix temp = sqrtCwInverse.mult(sqrtCb, new DenseMatrix(m, m));
+      Matrix symmMatrix = new UpperSPDDenseMatrix(m).rank1(temp);
+
+      /*System.err.println("Computing symmetric matrix");
+      Matrix temp = sqrtCwInverse.mult(Cb, new DenseMatrix(m, m));
+      Matrix symmMatrix = temp.mult(sqrtCwInverse, new UpperSymmDenseMatrix(m));*/
 
       if (m_Debug) {
         System.err.println("Symmetric matrix : \n" + symmMatrix);
       }
 
       // Perform eigendecomposition on symmetric matrix
-      SymmDenseEVD evd = SymmDenseEVD.factorize(symmMatrix);
+      evd = SymmDenseEVD.factorize(symmMatrix);
 
       if (m_Debug) {
         System.err.println("Eigenvectors of symmetric matrix :\n" + evd.getEigenvectors());
@@ -399,6 +462,7 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
       atts.add((Attribute) inputFormat.classAttribute().copy());
       Instances d = new Instances(inputFormat.relationName(), atts, 0);
       d.setClassIndex(d.numAttributes() - 1);
+
       return d;
     }
 
@@ -413,11 +477,13 @@ public class MultiClassFLDA extends SimpleBatchFilter implements OptionHandler, 
     protected Instances process(Instances instances) throws Exception {
 
       Instances transformed = getOutputFormat();
-      for (Instance inst : instances) {
-        Vector newInst = m_WeightingMatrix.mult(instanceToVector(inst), new DenseVector(m_WeightingMatrix.numRows()));
+      Matrix newInsts = m_WeightingMatrix.mult(instancesToMatrix(instances),
+              new DenseMatrix(m_WeightingMatrix.numRows(), instances.numInstances()));
+      for (int j = 0; j < instances.numInstances(); j++) {
+        Instance inst = instances.instance(j);
         double[] newVals = new double[m_WeightingMatrix.numRows() + 1];
         for (int i = 0; i < m_WeightingMatrix.numRows(); i++) {
-          newVals[i] = newInst.get(i);
+          newVals[i] = newInsts.get(i, j);
         }
         newVals[transformed.classIndex()] = inst.classValue();
         transformed.add(new DenseInstance(inst.weight(), newVals));
