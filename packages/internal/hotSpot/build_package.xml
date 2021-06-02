@@ -89,6 +89,7 @@
              destdir="${doc}" 
              Author="yes" 
              Public="yes"
+	     additionalparam="-Xdoclint:none"
              link="http://weka.sourceforge.net/doc.dev/"
              maxmemory="256m"/>          
   </target> 
