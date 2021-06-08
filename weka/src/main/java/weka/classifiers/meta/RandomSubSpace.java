@@ -29,17 +29,9 @@ import java.util.Vector;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.RandomizableParallelIteratedSingleClassifierEnhancer;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.Option;
-import weka.core.Randomizable;
-import weka.core.RevisionUtils;
-import weka.core.TechnicalInformation;
+import weka.core.*;
 import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
-import weka.core.TechnicalInformationHandler;
-import weka.core.Utils;
-import weka.core.WeightedInstancesHandler;
 import weka.filters.unsupervised.attribute.Remove;
 
 /**
@@ -494,6 +486,121 @@ public class RandomSubSpace
       Utils.normalize(sums);
       return sums;
     }
+  }
+
+  /**
+   * Tool tip text for this property
+   *
+   * @return the tool tip for this property
+   */
+  public String batchSizeTipText() {
+    return "Batch size to use if base learner is a BatchPredictor";
+  }
+
+  /**
+   * Set the batch size to use. Gets passed through to the base learner if it
+   * implements BatchPredictor. Otherwise it is just ignored.
+   *
+   * @param size the batch size to use
+   */
+  public void setBatchSize(String size) {
+
+    if (getClassifier() instanceof BatchPredictor) {
+      ((BatchPredictor) getClassifier()).setBatchSize(size);
+    } else {
+      super.setBatchSize(size);
+    }
+  }
+
+  /**
+   * Gets the preferred batch size from the base learner if it implements
+   * BatchPredictor. Returns 1 as the preferred batch size otherwise.
+   *
+   * @return the batch size to use
+   */
+  public String getBatchSize() {
+
+    if (getClassifier() instanceof BatchPredictor) {
+      return ((BatchPredictor) getClassifier()).getBatchSize();
+    } else {
+      return super.getBatchSize();
+    }
+  }
+
+  /**
+   * Batch scoring method. Calls the appropriate method for the base learner if
+   * it implements BatchPredictor. Otherwise it simply calls the
+   * distributionForInstance() method repeatedly.
+   *
+   * @param insts the instances to get predictions for
+   * @return an array of probability distributions, one for each instance
+   * @throws Exception if a problem occurs
+   */
+  public double[][] distributionsForInstances(Instances insts)
+          throws Exception {
+
+    // default model?
+    if (m_ZeroR != null) {
+      return ((BatchPredictor)m_ZeroR).distributionsForInstances(insts);
+    }
+
+    double[][] ensemblePreds = new double[insts.numInstances()][insts.numClasses()];
+    if (getClassifier() instanceof BatchPredictor) {
+      if (insts.classAttribute().isNumeric() == true) {
+        int[] numNonMissing = new int[insts.numInstances()];
+        for (int i = 0; i < m_NumIterations; i++) {
+          double[][] preds = ((BatchPredictor) m_Classifiers[i]).distributionsForInstances(insts);
+          for (int j = 0; j < preds.length; j++) {
+            if (!Utils.isMissingValue(preds[j][0])) {
+              ensemblePreds[j][0] += preds[j][0];
+              numNonMissing[j]++;
+            }
+          }
+        }
+        for (int j = 0; j < ensemblePreds.length; j++) {
+          if (numNonMissing[j] == 0) {
+            ensemblePreds[j][0] = Utils.missingValue();
+          } else {
+            ensemblePreds[j][0] /= numNonMissing[j];
+          }
+        }
+      } else {
+        for (int i = 0; i < m_NumIterations; i++) {
+          double[][] preds = ((BatchPredictor) m_Classifiers[i]).distributionsForInstances(insts);
+          for (int j = 0; j < preds.length; j++) {
+            for (int k = 0; k < preds[j].length; k++) {
+              ensemblePreds[j][k] += preds[j][k];
+            }
+          }
+        }
+        for (int j = 0; j < ensemblePreds.length; j++) {
+          double sum = Utils.sum(ensemblePreds[j]);
+          if (!Utils.eq((sum), 0)) {
+            Utils.normalize(ensemblePreds[j], sum);
+          }
+        }
+      }
+      return ensemblePreds;
+    } else {
+      double[][] result = new double[insts.numInstances()][insts.numClasses()];
+      for (int i = 0; i < insts.numInstances(); i++) {
+        result[i] = distributionForInstance(insts.instance(i));
+      }
+      return result;
+    }
+  }
+
+  /**
+   * Returns true if the base classifier implements BatchPredictor and is able
+   * to generate batch predictions efficiently
+   *
+   * @return true if the base classifier can generate batch predictions efficiently
+   */
+  public boolean implementsMoreEfficientBatchPrediction() {
+    if (!(getClassifier() instanceof BatchPredictor)) {
+      return super.implementsMoreEfficientBatchPrediction();
+    }
+    return ((BatchPredictor) getClassifier()).implementsMoreEfficientBatchPrediction();
   }
 
   /**
