@@ -49,67 +49,58 @@ import weka.core.SingleIndex;
 import weka.core.Utils;
 
 /**
- * <!-- globalinfo-start --> HotSpot learns a set of rules (displayed in a
- * tree-like structure) that maximize/minimize a target variable/value of
- * interest. With a nominal target, one might want to look for segments of the
- * data where there is a high probability of a minority value occuring (given
- * the constraint of a minimum support). For a numeric target, one might be
- * interested in finding segments where this is higher on average than in the
- * whole data set. For example, in a health insurance scenario, find which
- * health insurance groups are at the highest risk (have the highest claim
- * ratio), or, which groups have the highest average insurance payout. This
- * algorithm is similar in spirit to the PRIM bump hunting algorithm described
- * by Friedman and Fisher (1999).
- * <p/>
- * <!-- globalinfo-end -->
+ <!-- globalinfo-start -->
+ * HotSpot learns a set of rules (displayed in a tree-like structure) that maximize/minimize a target variable/value of interest. With a nominal target, one might want to look for segments of the data where there is a high probability of a minority value occuring (given the constraint of a minimum support). For a numeric target, one might be interested in finding segments where this is higher on average than in the whole data set. For example, in a health insurance scenario, find which health insurance groups are at the highest risk (have the highest claim ratio), or, which groups have the highest average insurance payout.  This algorithm is similar in spirit to the PRIM bump hunting algorithm described by Friedman and Fisher (1999).
+ * <br><br>
+ <!-- globalinfo-end -->
+ *
+ <!-- options-start -->
+ * Valid options are: <p>
  * 
- * <!-- options-start --> Valid options are:
- * <p/>
+ * <pre> -c &lt;num | first | last | attribute name&gt;
+ *  The target index. (default = last)</pre>
  * 
- * <pre>
- * -c &lt;num | first | last&gt;
- *  The target index. (default = last)
- * </pre>
+ * <pre> -V &lt;num | first | last&gt;
+ *  The target value (nominal target only, default = first)</pre>
  * 
- * <pre>
- * -V &lt;num | first | last&gt;
- *  The target value (nominal target only, default = first)
- * </pre>
+ * <pre> -L
+ *  Minimize rather than maximize.</pre>
  * 
- * <pre>
- * -L
- *  Minimize rather than maximize.
- * </pre>
- * 
- * <pre>
- * -S &lt;num&gt;
+ * <pre> -S &lt;num&gt;
  *  Minimum value count (nominal target)/segment size (numeric target).
  *  Values between 0 and 1 are 
  *  interpreted as a percentage of 
- *  the total population; values &gt; 1 are 
+ *  the total population (numeric) or total target value
+ *  population size (nominal); values &gt; 1 are 
  *  interpreted as an absolute number of 
- *  instances (default = 0.3)
- * </pre>
+ *  instances (default = 0.3)</pre>
  * 
- * <pre>
- * -M &lt;num&gt;
- *  Maximum branching factor (default = 2)
- * </pre>
+ * <pre> -M &lt;num&gt;
+ *  Maximum branching factor (default = 2)</pre>
  * 
- * <pre>
- * -I &lt;num&gt;
+ * <pre> -length &lt;num&gt;
+ *  Maximum rule length (default = -1, i.e. no maximum)</pre>
+ * 
+ * <pre> -sum
+ *  Operate on sum, rather than average, for numeric target. Note, this mode
+ *  can only operate on nominal attributes.</pre>
+ * 
+ * <pre> -I &lt;num&gt;
  *  Minimum improvement in target value in order 
- *  to add a new branch/test (default = 0.01 (1%))
- * </pre>
+ *  to add a new branch/test (default = 0.01 (1%))</pre>
  * 
- * <pre>
- * -D
+ * <pre> -Z
+ *  Treat zero (first value) as missing for nominal attributes</pre>
+ * 
+ * <pre> -R
+ *  Output a set of rules instead of a tree structure</pre>
+ * 
+ * <pre> -D
  *  Output debugging info (duplicate rule lookup 
- *  hash table stats)
- * </pre>
+ *  hash table stats)</pre>
  * 
- * <!-- options-end -->
- * 
+ <!-- options-end -->
+ *
  * @author Mark Hall (mhall{[at]}pentaho{[dot]}org
  * @version $Revision$
  */
@@ -207,7 +198,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns a string describing this classifier
-   * 
+   *
    * @return a description of the classifier suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -228,7 +219,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns default capabilities of HotSpot
-   * 
+   *
    * @return the capabilities of HotSpot
    */
   @Override
@@ -254,7 +245,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    */
   protected class HotSpotHashKey implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3962829200560373755L;
 
@@ -311,7 +302,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Build the tree
-   * 
+   *
    * @param instances the training instances
    * @throws Exception if something goes wrong
    */
@@ -437,7 +428,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Return the tree as a string
-   * 
+   *
    * @return a String containing the tree
    */
   @Override
@@ -663,7 +654,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     /**
      * Constructor
-     * 
+     *
      * @param insts the instances at this node
      * @param targetValue the target value
      * @param splitVals the values of attributes split on so far down this
@@ -759,7 +750,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     /**
      * Create a subset of instances that correspond to the supplied test details
-     * 
+     *
      * @param insts the instances to create the subset from
      * @param test the details of the split
      */
@@ -791,7 +782,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     /**
      * Evaluate a numeric attribute for a potential split
-     * 
+     *
      * @param attIndex the index of the attribute
      * @param pq the priority queue of candidtate splits
      */
@@ -987,7 +978,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     /**
      * Evaluate a nominal attribute for a potential split
-     * 
+     *
      * @param attIndex the index of the attribute
      * @param pq the priority queue of candidtate splits
      */
@@ -1199,7 +1190,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     /**
      * Traverse the tree to create a string description
-     * 
+     *
      * @param depth the depth at this point in the tree
      * @param buff the string buffer to append node details to
      */
@@ -1458,7 +1449,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1469,7 +1460,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set the target index
-   * 
+   *
    * @param target the target index as a string (1-based)
    */
   public void setTarget(String target) {
@@ -1478,7 +1469,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get the target index as a string
-   * 
+   *
    * @return the target index (1-based)
    */
   public String getTarget() {
@@ -1487,7 +1478,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1497,7 +1488,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * For a nominal target, set the index of the value of interest (1-based)
-   * 
+   *
    * @param index the index of the nominal value of interest
    */
   public void setTargetIndex(String index) {
@@ -1506,7 +1497,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * For a nominal target, get the index of the value of interest (1-based)
-   * 
+   *
    * @return the index of the nominal value of interest
    */
   public String getTargetIndex() {
@@ -1515,7 +1506,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1525,7 +1516,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set whether to minimize the target rather than maximize
-   * 
+   *
    * @param m true if target is to be minimized
    */
   public void setMinimizeTarget(boolean m) {
@@ -1534,7 +1525,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get whether to minimize the target rather than maximize
-   * 
+   *
    * @return true if target is to be minimized
    */
   public boolean getMinimizeTarget() {
@@ -1595,7 +1586,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get the minimum support
-   * 
+   *
    * @return the minimum support
    */
   public String getSupport() {
@@ -1604,7 +1595,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set the minimum support
-   * 
+   *
    * @param s the minimum support
    */
   public void setSupport(String s) {
@@ -1613,7 +1604,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1624,7 +1615,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set the maximum branching factor
-   * 
+   *
    * @param b the maximum branching factor
    */
   public void setMaxBranchingFactor(int b) {
@@ -1633,7 +1624,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get the maximum branching factor
-   * 
+   *
    * @return the maximum branching factor
    */
   public int getMaxBranchingFactor() {
@@ -1642,7 +1633,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1653,7 +1644,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set the maximum rule length
-   * 
+   *
    * @param l the maximum rule length
    */
   public void setMaxRuleLength(int l) {
@@ -1662,7 +1653,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get the maximum rule length
-   * 
+   *
    * @return the maximum rule length
    */
   public int getMaxRuleLength() {
@@ -1671,7 +1662,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1683,7 +1674,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set whether to treat zero as missing.
-   * 
+   *
    * @param t true if zero (first value) for nominal attributes is to be treated
    *          like missing value.
    */
@@ -1693,7 +1684,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get whether to treat zero as missing.
-   * 
+   *
    * @return true if zero (first value) for nominal attributes is to be treated
    *         like missing value.
    */
@@ -1703,7 +1694,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1714,7 +1705,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set the minimum improvement in the target necessary to add a test
-   * 
+   *
    * @param i the minimum improvement
    */
   public void setMinImprovement(double i) {
@@ -1723,7 +1714,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get the minimum improvement in the target necessary to add a test
-   * 
+   *
    * @return the minimum improvement
    */
   public double getMinImprovement() {
@@ -1732,7 +1723,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1742,7 +1733,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set whether debugging info is output
-   * 
+   *
    * @param d true to output debugging info
    */
   public void setDebug(boolean d) {
@@ -1751,7 +1742,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get whether debugging info is output
-   * 
+   *
    * @return true if outputing debugging info
    */
   public boolean getDebug() {
@@ -1768,7 +1759,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1778,7 +1769,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns the tip text for this property
-   * 
+   *
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
@@ -1789,7 +1780,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Set whether capabilities checking is turned off.
-   * 
+   *
    * @param doNotCheck true if capabilities checking is turned off.
    */
   @Override
@@ -1799,7 +1790,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Get whether capabilities checking is turned off.
-   * 
+   *
    * @return true if capabilities checking is turned off.
    */
   @Override
@@ -1809,7 +1800,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   /**
    * Returns an enumeration describing the available options.
-   * 
+   *
    * @return an enumeration of all the available options.
    */
   @Override
@@ -1873,52 +1864,52 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
   /**
    * Parses a given list of options.
    * <p/>
-   * 
-   * <!-- options-start --> Valid options are:
-   * <p/>
-   * 
-   * <pre>
-   * -c &lt;num | first | last&gt;
-   *  The target index. (default = last)
-   * </pre>
-   * 
-   * <pre>
-   * -V &lt;num | first | last&gt;
-   *  The target value (nominal target only, default = first)
-   * </pre>
-   * 
-   * <pre>
-   * -L
-   *  Minimize rather than maximize.
-   * </pre>
-   * 
-   * <pre>
-   * -S &lt;num&gt;
-   *  Minimum value count (nominal target)/segment size (numeric target).
-   *  Values between 0 and 1 are 
-   *  interpreted as a percentage of 
-   *  the total population; values &gt; 1 are 
-   *  interpreted as an absolute number of 
-   *  instances (default = 0.3)
-   * </pre>
-   * 
-   * <pre>
-   * -M &lt;num&gt;
-   *  Maximum branching factor (default = 2)
-   * </pre>
-   * 
-   * <pre>
-   * -I &lt;num&gt;
-   *  Minimum improvement in target value in order 
-   *  to add a new branch/test (default = 0.01 (1%))
-   * </pre>
-   * 
-   * <pre>
-   * -D
-   *  Output debugging info (duplicate rule lookup 
-   *  hash table stats)
-   * </pre>
-   * 
+   *
+   * <!-- options-start -->
+   * * Valid options are: <p>
+   * * 
+   * * <pre> -c &lt;num | first | last | attribute name&gt;
+   * *  The target index. (default = last)</pre>
+   * * 
+   * * <pre> -V &lt;num | first | last&gt;
+   * *  The target value (nominal target only, default = first)</pre>
+   * * 
+   * * <pre> -L
+   * *  Minimize rather than maximize.</pre>
+   * * 
+   * * <pre> -S &lt;num&gt;
+   * *  Minimum value count (nominal target)/segment size (numeric target).
+   * *  Values between 0 and 1 are 
+   * *  interpreted as a percentage of 
+   * *  the total population (numeric) or total target value
+   * *  population size (nominal); values &gt; 1 are 
+   * *  interpreted as an absolute number of 
+   * *  instances (default = 0.3)</pre>
+   * * 
+   * * <pre> -M &lt;num&gt;
+   * *  Maximum branching factor (default = 2)</pre>
+   * * 
+   * * <pre> -length &lt;num&gt;
+   * *  Maximum rule length (default = -1, i.e. no maximum)</pre>
+   * * 
+   * * <pre> -sum
+   * *  Operate on sum, rather than average, for numeric target. Note, this mode
+   * *  can only operate on nominal attributes.</pre>
+   * * 
+   * * <pre> -I &lt;num&gt;
+   * *  Minimum improvement in target value in order 
+   * *  to add a new branch/test (default = 0.01 (1%))</pre>
+   * * 
+   * * <pre> -Z
+   * *  Treat zero (first value) as missing for nominal attributes</pre>
+   * * 
+   * * <pre> -R
+   * *  Output a set of rules instead of a tree structure</pre>
+   * * 
+   * * <pre> -D
+   * *  Output debugging info (duplicate rule lookup 
+   * *  hash table stats)</pre>
+   * * 
    * <!-- options-end -->
    * 
    * @param options the list of options as an array of strings
@@ -2104,3 +2095,4 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     }
   }
 }
+
