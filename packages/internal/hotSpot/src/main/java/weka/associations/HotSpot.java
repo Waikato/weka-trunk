@@ -1050,7 +1050,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
             double delta = 0;
             if (m_sumForNumericTarget && m_insts.attribute(m_target).isNumeric()) {
               delta = m_minimize ? 1.0 / merit : merit;
-              // TODO I think we need improvement expressed in x's over the average (i.e. values
+              // need improvement expressed in x's over the average (i.e. values
               // >= 1.0, so multiply by 100) - default of 0.01 (1%) becomes 1.0
               double minImprovement = m_minImprovement < 1.0 ? 100.0 * m_minImprovement : m_minImprovement;
               if (delta > minImprovement) {
