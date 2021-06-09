@@ -551,7 +551,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       details = " (" + m_globalTarget + ")";
     } else {
       details = " = " + m_header.attribute(m_target).value(m_targetIndex)
-        + "\n(" + (m_globalTarget * 100.0) + "% [" + m_globalSupport + "/"
+        + " (" + (m_globalTarget * 100.0) + "% [" + m_globalSupport + "/"
         + m_numInstances + "])";
     }
     graph.put("target", m_header.attribute(m_target).name() + details);
