@@ -470,7 +470,8 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       + (m_maxRuleLength < 0 ? "unbounded" : "" + m_maxRuleLength));
     buff.append("\nMinimum improvement in target: ");
     if (m_header.attribute(m_target).isNumeric() && m_sumForNumericTarget) {
-      buff.append("> ").append(Utils.doubleToString((m_minImprovement * 100.0), 2))
+      double minImprove = m_minImprovement > 1.0 ? m_minImprovement : m_minImprovement * 100;
+      buff.append("> ").append(Utils.doubleToString(minImprove, 2))
         .append("x above expected sum over the values of a splitting attribute");
     } else {
       buff.append(Utils.doubleToString((m_minImprovement * 100.0), 2) + "%");
