@@ -468,8 +468,13 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     buff.append("\nMaximum branching factor: " + m_maxBranchingFactor);
     buff.append("\nMaximum rule length: "
       + (m_maxRuleLength < 0 ? "unbounded" : "" + m_maxRuleLength));
-    buff.append("\nMinimum improvement in target: "
-      + Utils.doubleToString((m_minImprovement * 100.0), 2) + "%");
+    buff.append("\nMinimum improvement in target: ");
+    if (m_header.attribute(m_target).isNumeric() && m_sumForNumericTarget) {
+      buff.append("> ").append(Utils.doubleToString((m_minImprovement * 100.0), 2))
+        .append("x above expected sum over the values of a splitting attribute");
+    } else {
+      buff.append(Utils.doubleToString((m_minImprovement * 100.0), 2) + "%");
+    }
 
     buff.append("\n\n");
     if (!m_outputRules) {
@@ -550,7 +555,16 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
         + m_numInstances + "])";
     }
     graph.put("target", m_header.attribute(m_target).name() + details);
-    String aggregationType = m_header.attribute(m_target).isNumeric() ? "average" : "probability";
+    String aggregationType = "";
+    if (m_header.attribute(m_target).isNumeric()) {
+      if (m_sumForNumericTarget) {
+        aggregationType = "sum";
+      } else {
+        aggregationType = "average";
+      }
+    } else {
+      aggregationType = "probability";
+    }
     String objective = m_minimize ? "minimize" : "maximize";
     graph.put("aggregation", aggregationType);
     graph.put("objective", objective);
