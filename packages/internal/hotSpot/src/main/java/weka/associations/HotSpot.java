@@ -810,7 +810,8 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       double targetLeft = 0;
       double targetRight = 0;
 
-      int numMissing = 0;
+      int numMissingAtt = 0;
+      int numMissingTarget = 0;
       // count missing values and sum/counts for the initial right subset
       for (int i = tempInsts.numInstances() - 1; i >= 0; i--) {
         if (!tempInsts.instance(i).isMissing(attIndex)) {
@@ -819,14 +820,16 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
               (tempInsts.attribute(m_target).isNumeric()) ? (tempInsts
                 .instance(i).value(m_target)) : ((tempInsts.instance(i).value(
                 m_target) == m_targetIndex) ? 1 : 0);
+          } else {
+            numMissingTarget++;
           }
         } else {
-          numMissing++;
+          numMissingAtt++;
         }
       }
 
       // are there still enough instances?
-      if (tempInsts.numInstances() - numMissing <= m_supportCount) {
+      if (tempInsts.numInstances() - numMissingAtt - numMissingTarget <= m_supportCount) {
         return;
       }
 
@@ -838,7 +841,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
       // denominators
       double leftCount = 0;
-      double rightCount = tempInsts.numInstances() - numMissing;
+      double rightCount = tempInsts.numInstances() - numMissingAtt - numMissingTarget;
 
       /*
        * targetRight = (tempInsts.attribute(m_target).isNumeric()) ?
@@ -849,7 +852,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       // tempInsts.attributeStats(attIndexnominalCounts[m_targetIndex];
 
       // consider all splits
-      for (int i = 0; i < tempInsts.numInstances() - numMissing; i++) {
+      for (int i = 0; i < tempInsts.numInstances() - numMissingAtt; i++) {
         Instance inst = tempInsts.instance(i);
 
         if (!inst.isMissing(m_target)) {
@@ -864,13 +867,13 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
           }
           leftCount++;
           rightCount--;
+        }
 
-          // move to the end of any ties
-          if (i < tempInsts.numInstances() - 1
-            && inst.value(attIndex) == tempInsts.instance(i + 1)
-              .value(attIndex)) {
-            continue;
-          }
+        // move to the end of any ties
+        if (i < tempInsts.numInstances() - 1
+          && inst.value(attIndex) == tempInsts.instance(i + 1)
+          .value(attIndex)) {
+          continue;
         }
 
         // evaluate split
