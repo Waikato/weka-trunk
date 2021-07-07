@@ -85,6 +85,10 @@ import weka.core.Utils;
  *  Operate on sum, rather than average, for numeric target. Note, this mode
  *  can only operate on nominal attributes.</pre>
  * 
+ * <pre> -direct
+ *  Consider direct max/min sum of target rather than sum relative to that expected across
+ *  categories of a nominal attribute. Use in conjunction with -sum.</pre>
+ * 
  * <pre> -I &lt;num&gt;
  *  Minimum improvement in target value in order 
  *  to add a new branch/test (default = 0.01 (1%))</pre>
@@ -173,9 +177,17 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
   /**
    * Whether to work with the sum (rather than average) for a numeric target. In this case,
    * only nominal attributes can be considered and merit is based on relative improvement
-   * over the average/expected sum of the categories of a nominal attribute under consideration.
+   * over the average/expected sum of the categories of a nominal attribute under consideration -
+   * i.e. high/low concentration/volume of sum relative to expected.
    */
   protected boolean m_sumForNumericTarget;
+
+  /**
+   * When true (in conjunction with -sum), then just look for those nominal categories with
+   * highest/smallest direct sum of target values (i.e. max/min volume) rather than
+   * relative to the expected sum
+   */
+  protected boolean m_directSum;
 
   /** Error messages relating to too large/small support values */
   protected String m_errorMessage;
@@ -326,7 +338,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       String value = m_targetSI.getSingleIndex();
       int index = -1;
       for (int i = 0; i < instances.numAttributes(); i++) {
-        if (instances.attribute(i).name().indexOf(value) > -1) { // TODO
+        if (instances.attribute(i).name().indexOf(value) > -1) {
           index = i;
           break;
         }
@@ -348,12 +360,17 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     if (inst.attribute(m_target).isNominal()) {
       m_targetIndexSI.setUpper(inst.attribute(m_target).numValues() - 1);
       m_targetIndex = m_targetIndexSI.getIndex();
+
+      if (m_sumForNumericTarget || m_directSum) {
+        // Turn these off, as they only apply to a numeric target
+        m_sumForNumericTarget = m_directSum = false;
+      }
     } else {
       m_targetIndexSI.setUpper(1); // just to stop this SingleIndex from moaning
     }
 
     if (inst.attribute(m_target).isNumeric()) {
-      if (m_sumForNumericTarget) {
+      if (m_sumForNumericTarget || m_directSum) {
         m_globalTarget = inst.attributeStats(m_target).numericStats.sum;
       } else {
         m_globalTarget = inst.meanOrMode(m_target);
@@ -366,7 +383,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
           "Error: support set to more instances than there are in the data!";
         return;
       }
-      if (m_sumForNumericTarget && !inst.checkForAttributeType(Attribute.NOMINAL)) {
+      if ((m_sumForNumericTarget || m_directSum) && !inst.checkForAttributeType(Attribute.NOMINAL)) {
         m_errorMessage = "Aggregation type sum requires at least one nominal attribute in the data";
         return;
       }
@@ -455,7 +472,8 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
       buff.append("\nMinimum value count for segments: ");
     } else {
-      buff.append("\nTarget average in total population: "
+      String aggType = m_sumForNumericTarget || m_directSum ? "sum" : "average";
+      buff.append("\nTarget " + aggType + " in total population: "
         + Utils.doubleToString(m_globalTarget, 3));
       buff.append("\nMinimum segment size: ");
     }
@@ -468,11 +486,16 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     buff.append("\nMaximum branching factor: " + m_maxBranchingFactor);
     buff.append("\nMaximum rule length: "
       + (m_maxRuleLength < 0 ? "unbounded" : "" + m_maxRuleLength));
-    buff.append("\nMinimum improvement in target: ");
+    if (!m_directSum) {
+      buff.append("\nMinimum improvement in target: ");
+    }
     if (m_header.attribute(m_target).isNumeric() && m_sumForNumericTarget) {
-      double minImprove = m_minImprovement > 1.0 ? m_minImprovement : m_minImprovement * 100;
-      buff.append("> ").append(Utils.doubleToString(minImprove, 2))
-        .append("x above expected sum over the values of a splitting attribute");
+      if (!m_directSum) {
+        double minImprove =
+          m_minImprovement > 1.0 ? m_minImprovement : m_minImprovement * 100;
+        buff.append("> ").append(Utils.doubleToString(minImprove, 2)).append(
+          "x above expected sum over the values of a splitting attribute");
+      }
     } else {
       buff.append(Utils.doubleToString((m_minImprovement * 100.0), 2) + "%");
     }
@@ -558,7 +581,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     graph.put("target", m_header.attribute(m_target).name() + details);
     String aggregationType = "";
     if (m_header.attribute(m_target).isNumeric()) {
-      if (m_sumForNumericTarget) {
+      if (m_sumForNumericTarget || m_directSum) {
         aggregationType = "sum";
       } else {
         aggregationType = "average";
@@ -701,7 +724,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
           if (m_insts.attribute(i).isNominal()) {
             evaluateNominal(i, splitQueue);
           } else {
-            if (!m_sumForNumericTarget) {
+            if (!(m_sumForNumericTarget || m_directSum)) {
               evaluateNumeric(i, splitQueue);
             }
             // skip numeric attributes if using the sum, as finding
@@ -1008,6 +1031,9 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
      */
     private void
       evaluateNominal(int attIndex, PriorityQueue<HotTestDetails> pq) {
+      if (m_insts.attribute(attIndex).numValues() < 2) {
+        return;
+      }
       int[] counts = m_insts.attributeStats(attIndex).nominalCounts;
       boolean ok = false;
       // only consider attribute values that result in subsets that meet/exceed
@@ -1059,15 +1085,32 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
                                                                                                // only
                                                                                                // test
               : true)) {
-            double merit = m_sumForNumericTarget && m_insts.attribute(m_target).isNumeric()
+            double merit = 0;
+            if ((m_sumForNumericTarget || m_directSum) && m_insts.attribute(m_target).isNumeric()) {
+              if (m_directSum) {
+                merit = subsetMerit[i];
+              } else {
+                merit = subsetMerit[i] / expectedSumPerCategory;
+              }
+            } else {
+              merit = subsetMerit[i]/ counts[i];
+            }
+
+            /* double merit = m_sumForNumericTarget && m_insts.attribute(m_target).isNumeric()
               ? subsetMerit[i] / expectedSumPerCategory
-              : subsetMerit[i] / counts[i]; // subsetMerit[i][1];
+              : subsetMerit[i] / counts[i]; // subsetMerit[i][1]; */
             double delta = 0;
-            if (m_sumForNumericTarget && m_insts.attribute(m_target).isNumeric()) {
+            if ((m_sumForNumericTarget || m_directSum) && m_insts.attribute(m_target).isNumeric()) {
               delta = m_minimize ? 1.0 / merit : merit;
               // need improvement expressed in x's over the average (i.e. values
               // >= 1.0, so multiply by 100) - default of 0.01 (1%) becomes 1.0
-              double minImprovement = m_minImprovement < 1.0 ? 100.0 * m_minImprovement : m_minImprovement;
+              double minImprovement = 0;
+              if (m_sumForNumericTarget) {
+                minImprovement = m_minImprovement < 1.0 ?
+                  100.0 * m_minImprovement :
+                  m_minImprovement;
+              }
+              // min improvement is ignored/makes no sense for absolute sum
               if (delta > minImprovement) {
                 double support = counts[i];
                 HotTestDetails newD =
@@ -1122,9 +1165,11 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       if (m_header.attribute(m_target).isNumeric()) {
         buff.append(spacer + "(");
         if (m_sumForNumericTarget) {
-          buff.append(Utils.doubleToString(m_testDetails[i].m_targetSum, 4))
-            .append(" : ").append(Utils.doubleToString(m_testDetails[i].m_merit,2))
-            .append("x ");
+          buff.append(Utils.doubleToString(m_testDetails[i].m_targetSum, 4));
+          if (!m_directSum) {
+            buff.append(" : ")
+              .append(Utils.doubleToString(m_testDetails[i].m_merit, 2)).append("x ");
+          }
         } else {
           buff.append(Utils.doubleToString(m_testDetails[i].m_merit, 4));
         }
@@ -1181,14 +1226,14 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
         if (targetIsNominal) {
           support = m_testDetails[i].m_supportLevel;
         }
-        if (!targetIsNominal && m_sumForNumericTarget) {
+        if (!targetIsNominal && (m_sumForNumericTarget || m_directSum)) {
           numericTargetSum = m_testDetails[i].m_targetSum;
         }
       }
       node.put("comparison", comparison);
       node.put("value", value);
-      node.put("target", !targetIsNominal && m_sumForNumericTarget ? numericTargetSum : merit); // target value
-      if (!targetIsNominal && m_sumForNumericTarget) {
+      node.put("target", !targetIsNominal && (m_sumForNumericTarget || m_directSum) ? numericTargetSum : merit); // target value
+      if (!targetIsNominal && m_sumForNumericTarget && !m_directSum) {
         // in this case, merit holds the number of x's that this node's category  is above the expected sum
         node.put("merit", merit);
       }
@@ -1200,7 +1245,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     protected void graphAsMap(Map<String, Object> graph) {
       // details of this node
-      if (m_children != null) {
+      if (m_children != null && m_children.length > 0) {
         List<Map<String, Object>> childList = new ArrayList<Map<String, Object>>();
         graph.put("children", childList);
         for (int i = 0; i < m_children.length; i++) {
@@ -1562,7 +1607,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
-  public String useRelativeSumForNumericTargetTipText() {
+  public String useSumForNumericTargetTipText() {
     return "For a numeric target use the sum of the target (relative to the expected sum) "
       + "as the aggregation rather than the average. In this mode, only nominal attributes "
       + "are considered for splitting in the tree. The metric favours categorical values "
@@ -1579,7 +1624,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    *
    * @param relativeSumForNumericTarget true to use relative sum as the aggregation
    */
-  public void setUseRelativeSumForNumericTarget(boolean relativeSumForNumericTarget) {
+  public void setUseSumForNumericTarget(boolean relativeSumForNumericTarget) {
     m_sumForNumericTarget = relativeSumForNumericTarget;
   }
 
@@ -1592,8 +1637,43 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    *
    * @return true if using relative sum as the aggregation
    */
-  public boolean getUseRelativeSumForNumericTarget() {
+  public boolean getUseSumForNumericTarget() {
     return m_sumForNumericTarget;
+  }
+
+  /**
+   * Returns the tip text for this property
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
+  public String useDirectRatherThanRelativeSumForNumericTargetTipText() {
+    return "Look for nominal categories with directly high/low concentration/volume of sum "
+      + "of target, rather than sum relative to the expected sum across categories. Only "
+      + "has an effect when using sum (rather than average) as the aggregation for a numeric "
+      + "target";
+  }
+
+  /**
+   * Look for nominal categories with directly high/low concentration/volume of sum
+   * of the target, rather than sum relative to the expected sum across categories. Only has
+   * an effect when using sum (rather than average) as the aggregation of a numreic target
+   *
+   * @param useAbsolute use the direct, rather than relative, sum as the goodness metric
+   */
+  public void setUseDirectRatherThanRelativeSumForNumericTarget(boolean useAbsolute) {
+    m_directSum = useAbsolute;
+  }
+
+  /**
+   * Look for nominal categories with directly high/low concentration/volume of sum
+   * of the target, rather than sum relative to the expected sum across categories. Only has
+   * an effect when using sum (rather than average) as the aggregation of a numreic target
+   *
+   * @return true if using the direct, rather than relative, sum as the goodness metric
+   */
+  public boolean getUseDirectRatherThanRelativeSumForNumericTarget() {
+    return m_directSum;
   }
 
   /**
@@ -1854,6 +1934,10 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       "\tOperate on sum, rather than average, for numeric target. Note, this mode\n\t"
         + "can only operate on nominal attributes.", "sum", 0, "-sum"));
     newVector.addElement(new Option(
+      "\tConsider direct max/min sum of target rather than sum relative to that expected across\n\t"
+        + "categories of a nominal attribute. Use in conjunction with -sum.",
+      "direct", 0, "-direct"));
+    newVector.addElement(new Option(
       "\tMinimum improvement in target value in order "
         + "\n\tto add a new branch/test (default = 0.01 (1%))", "I", 1,
       "-I <num>"));
@@ -1889,52 +1973,56 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    * Parses a given list of options.
    * <p/>
    *
-   * <!-- options-start -->
-   * * Valid options are: <p>
-   * * 
-   * * <pre> -c &lt;num | first | last | attribute name&gt;
-   * *  The target index. (default = last)</pre>
-   * * 
-   * * <pre> -V &lt;num | first | last&gt;
-   * *  The target value (nominal target only, default = first)</pre>
-   * * 
-   * * <pre> -L
-   * *  Minimize rather than maximize.</pre>
-   * * 
-   * * <pre> -S &lt;num&gt;
-   * *  Minimum value count (nominal target)/segment size (numeric target).
-   * *  Values between 0 and 1 are 
-   * *  interpreted as a percentage of 
-   * *  the total population (numeric) or total target value
-   * *  population size (nominal); values &gt; 1 are 
-   * *  interpreted as an absolute number of 
-   * *  instances (default = 0.3)</pre>
-   * * 
-   * * <pre> -M &lt;num&gt;
-   * *  Maximum branching factor (default = 2)</pre>
-   * * 
-   * * <pre> -length &lt;num&gt;
-   * *  Maximum rule length (default = -1, i.e. no maximum)</pre>
-   * * 
-   * * <pre> -sum
-   * *  Operate on sum, rather than average, for numeric target. Note, this mode
-   * *  can only operate on nominal attributes.</pre>
-   * * 
-   * * <pre> -I &lt;num&gt;
-   * *  Minimum improvement in target value in order 
-   * *  to add a new branch/test (default = 0.01 (1%))</pre>
-   * * 
-   * * <pre> -Z
-   * *  Treat zero (first value) as missing for nominal attributes</pre>
-   * * 
-   * * <pre> -R
-   * *  Output a set of rules instead of a tree structure</pre>
-   * * 
-   * * <pre> -D
-   * *  Output debugging info (duplicate rule lookup 
-   * *  hash table stats)</pre>
-   * * 
-   * <!-- options-end -->
+   <!-- options-start -->
+   * Valid options are: <p>
+   * 
+   * <pre> -c &lt;num | first | last | attribute name&gt;
+   *  The target index. (default = last)</pre>
+   * 
+   * <pre> -V &lt;num | first | last&gt;
+   *  The target value (nominal target only, default = first)</pre>
+   * 
+   * <pre> -L
+   *  Minimize rather than maximize.</pre>
+   * 
+   * <pre> -S &lt;num&gt;
+   *  Minimum value count (nominal target)/segment size (numeric target).
+   *  Values between 0 and 1 are 
+   *  interpreted as a percentage of 
+   *  the total population (numeric) or total target value
+   *  population size (nominal); values &gt; 1 are 
+   *  interpreted as an absolute number of 
+   *  instances (default = 0.3)</pre>
+   * 
+   * <pre> -M &lt;num&gt;
+   *  Maximum branching factor (default = 2)</pre>
+   * 
+   * <pre> -length &lt;num&gt;
+   *  Maximum rule length (default = -1, i.e. no maximum)</pre>
+   * 
+   * <pre> -sum
+   *  Operate on sum, rather than average, for numeric target. Note, this mode
+   *  can only operate on nominal attributes.</pre>
+   * 
+   * <pre> -direct
+   *  Consider direct max/min sum of target rather than sum relative to that expected across
+   *  categories of a nominal attribute. Use in conjunction with -sum.</pre>
+   * 
+   * <pre> -I &lt;num&gt;
+   *  Minimum improvement in target value in order 
+   *  to add a new branch/test (default = 0.01 (1%))</pre>
+   * 
+   * <pre> -Z
+   *  Treat zero (first value) as missing for nominal attributes</pre>
+   * 
+   * <pre> -R
+   *  Output a set of rules instead of a tree structure</pre>
+   * 
+   * <pre> -D
+   *  Output debugging info (duplicate rule lookup 
+   *  hash table stats)</pre>
+   * 
+   <!-- options-end -->
    * 
    * @param options the list of options as an array of strings
    * @exception Exception if an option is not supported
@@ -1978,7 +2066,8 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     setDebug(Utils.getFlag('D', options));
     setOutputRules(Utils.getFlag('R', options));
     setTreatZeroAsMissing(Utils.getFlag('Z', options));
-    setUseRelativeSumForNumericTarget(Utils.getFlag("sum", options));
+    setUseSumForNumericTarget(Utils.getFlag("sum", options));
+    setUseDirectRatherThanRelativeSumForNumericTarget(Utils.getFlag("direct", options));
   }
 
   /**
@@ -1988,7 +2077,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    */
   @Override
   public String[] getOptions() {
-    String[] options = new String[17];
+    String[] options = new String[18];
     int current = 0;
 
     options[current++] = "-c";
@@ -2018,8 +2107,12 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       options[current++] = "-Z";
     }
 
-    if (getUseRelativeSumForNumericTarget()) {
+    if (getUseSumForNumericTarget()) {
       options[current++] = "-sum";
+    }
+
+    if (getUseDirectRatherThanRelativeSumForNumericTarget()) {
+      options[current++] = "-direct";
     }
 
     while (current < options.length) {
