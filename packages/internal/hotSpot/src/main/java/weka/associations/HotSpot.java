@@ -146,7 +146,14 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
   /** The maximum depth of a path in the tree (or length of a rule) */
   protected int m_maxRuleLength = 3;
 
+  /** Attempt to force the maximum rule length by reducing support */
   protected boolean m_forceMaxRuleLength;
+
+  /**
+   * Use a heuristic (sqrt(num instances)) to set the minimum segment size for
+   * for direct and relative sum trees (numeric target only)
+   */
+  protected boolean m_heuristic;
 
   /**
    * Treat zero as missing for nominal attributes (useful for basket data in
@@ -319,9 +326,15 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     int globalSupport = insts.attribute(m_target).isNominal() ?
       insts.attributeStats(m_target).nominalCounts[m_targetIndex] : 0;
 
-    int result = insts.attribute(m_target).isNumeric() ? (int) Math
-      .floor((m_support * insts.numInstances()) + 0.5d) : (int) Math
-      .floor((m_support * globalSupport) + 0.5d);
+    int result = 0;
+    if (insts.attribute(m_target).isNumeric()
+      && m_heuristic && (m_directSum || m_sumForNumericTarget)) {
+      result = (int) Math.sqrt(insts.numInstances()) + 2;
+    } else {
+      result = insts.attribute(m_target).isNumeric() ?
+        (int) Math.floor((m_support * insts.numInstances()) + 0.5d) :
+        (int) Math.floor((m_support * globalSupport) + 0.5d);
+    }
 
     if (result < 1) {
       result = 1;
@@ -445,10 +458,14 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
         m_support = m_support / m_globalSupport;
       }
     }
-    m_supportCount = inst.attribute(m_target).isNumeric() ? (int) Math
+
+    m_supportCount = getSupportForInstances(instances);
+    /* m_supportCount = inst.attribute(m_target).isNumeric() ? (int) Math
       .floor((m_support * m_numInstances) + 0.5d) : (int) Math
-      .floor((m_support * m_globalSupport) + 0.5d);
+      .floor((m_support * m_globalSupport) + 0.5d); */
+
     // m_supportCount = (int)(m_support * m_numInstances);
+
     if (m_supportCount < 1) {
       m_supportCount = 1;
     }
@@ -496,9 +513,15 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
         + Utils.doubleToString(m_globalTarget, 3));
       buff.append("\nMinimum segment size: ");
     }
+    double supportPercentage = 0;
+    if (m_header.attribute(m_target).isNumeric() && m_heuristic && (m_directSum || m_sumForNumericTarget)) {
+      supportPercentage = ((double) m_supportCount / m_numInstances) * 100.0;
+    } else {
+      supportPercentage = m_support * 100.0;
+    }
     buff
       .append("" + m_supportCount + " instances ("
-        + Utils.doubleToString((m_support * 100.0), 2)
+        + Utils.doubleToString(supportPercentage, 2)
         + "% of " +
         (m_header.attribute(m_target).isNominal() ? "target value " : "")
         + "total population)");
@@ -510,15 +533,12 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     }
     if (m_header.attribute(m_target).isNumeric() && m_sumForNumericTarget || m_directSum) {
       if (!m_directSum) {
-        double minImprove =
-          m_minImprovement > 1.0 ? m_minImprovement : m_minImprovement * 100;
-        if (m_minimize) {
-          buff.append("{expected sum} over values of a splitting attribute is > ");
-          buff.append(Utils.doubleToString(minImprove, 2)).append("x above target");
-        } else {
-          buff.append("target > ").append(Utils.doubleToString(minImprove, 2)).append(
-            "x above {expected sum} over the values of a splitting attribute");
-        }
+        double xsNeeded = m_minimize ? 1.0 - m_minImprovement : 1.0 + m_minImprovement;
+        double minImprovPercent = m_minImprovement * 100.0;
+        buff.append(Utils.doubleToString(minImprovPercent, 2))
+          .append("% (").append(Utils.doubleToString(xsNeeded, 2))
+          .append("x) ").append((m_minimize ? "below " : "above ")).append("(of) the {expected sum} ")
+          .append("over the values of a splitting attribute");
       }
     } else {
       String targetType = m_header.attribute(m_target).isNominal() ? " in probability" : " of average";
@@ -596,6 +616,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
   }
 
   public Map<String, Object> graphAsMap() throws Exception {
+    m_head.assignIDs(-1);
     Map<String, Object> graph = new LinkedHashMap<String, Object>();
     String details = "";
     if (m_header.attribute(m_target).isNumeric()) {
@@ -659,6 +680,11 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       public double m_targetSum; // only when target is numeric and aggregation is sum
       // only when target is numeric, split is nominal and aggregation is sum (relative)
       public double m_expectedTargetSumPerCategory = -1;
+
+      // holds the distribution of the target (across all nominal labels for a nominal test)
+      public double[] m_distributionForNominalTest;
+      // holds the distribution of counts (across all nominal labels for a nominal test)
+      public int[] m_countsForNominalTest;
 
       public HotTestDetails(int attIndex, double splitVal, boolean lessThan,
         int support, int subsetSize, double merit) {
@@ -1113,6 +1139,9 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       if (m_insts.attribute(attIndex).numValues() < 2) {
         return;
       }
+      /* int baseSupportCount = m_insts.attribute(m_target).isNumeric() && m_heuristic && (m_directSum || m_sumForNumericTarget)
+        ? (int) Math.sqrt(supportCount) + 2 : supportCount; // use a heuristic to set the minimum segment size for sum trees */
+
       int[] counts = m_insts.attributeStats(attIndex).nominalCounts;
       boolean ok = false;
       // only consider attribute values that result in subsets that meet/exceed
@@ -1194,14 +1223,16 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
               : subsetMerit[i] / counts[i]; // subsetMerit[i][1]; */
             double delta = 0;
             if ((m_sumForNumericTarget || m_directSum) && m_insts.attribute(m_target).isNumeric()) {
+
               delta = merit;
-              // need improvement expressed in x's over the average (i.e. values
-              // >= 1.0, so multiply by 100) - default of 0.01 (1%) becomes 1.0
+
               double minImprovement = 0;
               if (m_sumForNumericTarget && !m_directSum) {
-                minImprovement = m_minImprovement < 1.0 ?
-                  100.0 * m_minImprovement :
-                  m_minImprovement;
+                double minIFrac = m_minImprovement;
+                if (m_minimize && minIFrac >= 1) {
+                  minIFrac = 0.99; // minimum improvement can't be more than a 99% reduction of the expected value
+                }
+                minImprovement = m_minimize ? 1.0 / (1.0 - minIFrac) : 1 + minIFrac;
               }
 
               // min improvement is ignored/makes no sense for absolute sum
@@ -1209,6 +1240,8 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
                 double support = counts[i];
                 HotTestDetails newD =
                   new HotTestDetails(attIndex, i, (int) support, subsetMerit[i], !m_directSum && m_minimize ? -merit : merit);
+                newD.m_distributionForNominalTest = subsetMerit;
+                newD.m_countsForNominalTest = counts;
                 if (!m_directSum) {
                   newD.m_expectedTargetSumPerCategory = expectedSumPerCategory;
                 }
@@ -1222,9 +1255,9 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
                 double support = (m_insts.attribute(m_target).isNominal()) ?
                   subsetMerit[i] :
                   counts[i];
-
                 HotTestDetails newD =
                   new HotTestDetails(attIndex, i, false, (int) support, counts[i], merit);
+                newD.m_distributionForNominalTest = subsetMerit;
                 pq.add(newD);
               }
             }
@@ -1265,12 +1298,19 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
           buff.append(Utils.doubleToString(m_testDetails[i].m_targetSum, 4));
           if (!m_directSum) {
             buff.append(" {").append(Utils.doubleToString(m_testDetails[i].m_expectedTargetSumPerCategory, 4)).append("}");
+            // merit is the # x's relative to expected sum
+            double merit = m_testDetails[i].m_merit < 0 ? -m_testDetails[i].m_merit : m_testDetails[i].m_merit;
+            if (m_minimize) {
+              merit = 1.0 / merit;
+            }
             buff.append(" : ")
-              .append(Utils.doubleToString(m_testDetails[i].m_merit < 0
-                ? -m_testDetails[i].m_merit : m_testDetails[i].m_merit, 2)).append("x ");
+              .append(Utils.doubleToString(merit, 2)).append("x ");
           }
         } else {
+          // here merit *is* the average target value
           buff.append(Utils.doubleToString(m_testDetails[i].m_merit, 4));
+          double xsComparedToNode = m_testDetails[i].m_merit / m_targetValue;
+          buff.append(" : ").append(Utils.doubleToString(xsComparedToNode, 2)).append("x");
         }
         buff.append(" [").append(
           m_testDetails[i].m_supportLevel).append("])");
@@ -1296,6 +1336,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     }
 
     protected void addNodeDetails(Map<String, Object> node, int i) {
+      node.put("id", m_id);
       node.put("name", m_header.attribute(m_testDetails[i].m_splitAttIndex).name());
       boolean isNumeric = m_header.attribute(m_testDetails[i].m_splitAttIndex).isNumeric();
       boolean targetIsNominal = m_header.attribute(m_targetIndex).isNominal();
@@ -1321,6 +1362,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
         comparison = "=";
         value = m_header.attribute(m_testDetails[i].m_splitAttIndex).value(
           (int) m_testDetails[i].m_splitValue);
+
         merit = m_testDetails[i].m_merit * (targetIsNominal ? 100.0 : 1.0);
         if (targetIsNominal) {
           support = m_testDetails[i].m_supportLevel;
@@ -1332,14 +1374,33 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
       node.put("comparison", comparison);
       node.put("value", value);
       node.put("target", !targetIsNominal && (m_sumForNumericTarget || m_directSum) ? numericTargetSum : merit); // target value
-      if (!targetIsNominal && m_sumForNumericTarget && !m_directSum) {
-        // in this case, merit holds the number of x's that this node's category  is above the expected sum
+
+      if (m_minimize && !targetIsNominal && (m_sumForNumericTarget || m_directSum)
+        && merit < 0) { // reverse the sign used if minimising in the sum cases
+        merit = -merit;
+      }
+
+      if (!targetIsNominal && !m_directSum) {
+        if (m_sumForNumericTarget) {
+          // in this case, merit holds the number of x's that this node's category is above the expected sum
+          // or the number of x's the expected sum is above this node's category (if minimizing)
+          if (m_minimize) {
+            merit = 1.0 / merit;
+          }
+          node.put("expectedSum", m_testDetails[i].m_expectedTargetSumPerCategory);
+        } else {
+          // here the merit *is* the average of the target value - need to compute x's
+          merit = m_testDetails[i].m_merit / m_targetValue;
+        }
         node.put("merit", merit);
-        node.put("expectedSum", m_testDetails[i].m_expectedTargetSumPerCategory);
       }
       node.put("subsetSize", subsetSize);
       if (support > 0) {
         node.put("support", support); // nominal target value only
+      }
+      if (m_testDetails[i].m_distributionForNominalTest != null) {
+        node.put("distribution", m_testDetails[i].m_distributionForNominalTest);
+        node.put("counts", m_testDetails[i].m_countsForNominalTest);
       }
     }
 
@@ -1901,6 +1962,37 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    * @return tip text for this property suitable for displaying in the
    *         explorer/experimenter gui
    */
+  public String useHeuristicMinSegmentSizeTipText() {
+    return "Set the minimum segment size/support for direct and relative sum "
+      + "trees via a heuristic. Overrides any manually specified support.";
+  }
+
+  /**
+   * Set whether to use a heuristic to set the minimum support for direct and
+   * relative sum trees
+   *
+   * @param useHeuristicMinSegmentSize true to use the heuristic
+   */
+  public void setUseHeuristicMinSegmentSize(boolean useHeuristicMinSegmentSize) {
+    m_heuristic = useHeuristicMinSegmentSize;
+  }
+
+  /**
+   * Get whether to use a heuristic to set the minimum support for direct and
+   * relative sum trees
+   *
+   * @return true if using the heuristic
+   */
+  public boolean getUseHeuristicMinSegmentSize() {
+    return m_heuristic;
+  }
+
+  /**
+   * Returns the tip text for this property
+   *
+   * @return tip text for this property suitable for displaying in the
+   *         explorer/experimenter gui
+   */
   public String treatZeroAsMissingTipText() {
     return "Treat zero (first value) for nominal attributes "
       + "the same way as missing value (i.e. ignore). This is useful "
@@ -2056,6 +2148,9 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
         + "population size (nominal); values > 1 are "
         + "\n\tinterpreted as an absolute number of "
         + "\n\tinstances (default = 0.3)", "S", 1, "-S <num>"));
+    newVector.addElement(new Option("\tUse a heuristic to set the minimum segment size "
+      + "\n\tfor numeric target direct and relative sum trees.", "heuristic", 0,
+      "-heuristic"));
     newVector.addElement(new Option("\tMaximum branching factor (default = 2)",
       "M", 1, "-M <num>"));
     newVector.addElement(new Option(
@@ -2101,6 +2196,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     setTargetIndex("first");
     m_errorMessage = null;
     m_forceMaxRuleLength = false;
+    m_heuristic = false;
   }
 
   /**
@@ -2203,6 +2299,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     setUseSumForNumericTarget(Utils.getFlag("sum", options));
     setUseDirectRatherThanRelativeSumForNumericTarget(Utils.getFlag("direct", options));
     setForceMaxRuleLength(Utils.getFlag("force", options));
+    setUseHeuristicMinSegmentSize(Utils.getFlag("heuristic", options));
   }
 
   /**
@@ -2212,7 +2309,7 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
    */
   @Override
   public String[] getOptions() {
-    String[] options = new String[19];
+    String[] options = new String[20];
     int current = 0;
 
     options[current++] = "-c";
@@ -2252,6 +2349,10 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
     if (getForceMaxRuleLength()) {
       options[current++] = "-force";
+    }
+
+    if (getUseHeuristicMinSegmentSize()) {
+      options[current++] = "-heuristic";
     }
 
     while (current < options.length) {
