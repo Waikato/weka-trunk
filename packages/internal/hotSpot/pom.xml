@@ -5,7 +5,7 @@
 
   <groupId>nz.ac.waikato.cms.weka</groupId>
   <artifactId>hotSpot</artifactId>
-  <version>1.0.14</version>
+  <version>1.0.15-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>hotSpot</name>
@@ -48,9 +48,9 @@
   </parent>
 
   <scm>
-    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/tags/hotSpot-1.0.14</connection>
-    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/tags/hotSpot-1.0.14</developerConnection>
-    <url>https://svn.cms.waikato.ac.nz/svn/weka/tags/hotSpot-1.0.14</url>
+    <connection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/internal/hotSpot</connection>
+    <developerConnection>scm:svn:https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/internal/hotSpot</developerConnection>
+    <url>https://svn.cms.waikato.ac.nz/svn/weka/trunk/packages/internal/hotSpot</url>
   </scm>
 
   <profiles>
