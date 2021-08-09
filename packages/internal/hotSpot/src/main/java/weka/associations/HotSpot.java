@@ -590,7 +590,9 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
 
   @Override
   public String graph() throws Exception {
-    m_head.assignIDs(-1);
+    if (m_head != null) {
+      m_head.assignIDs(-1);
+    }
 
     StringBuffer text = new StringBuffer();
 
@@ -609,14 +611,18 @@ public class HotSpot implements Associator, OptionHandler, RevisionHandler,
     }
     text.append("\" shape=plaintext]\n");
 
-    m_head.graphHotSpot(text);
+    if (m_head != null) {
+      m_head.graphHotSpot(text);
+    }
 
     text.append("}\n");
     return text.toString();
   }
 
   public Map<String, Object> graphAsMap() throws Exception {
-    m_head.assignIDs(-1);
+    if (m_head != null) {
+      m_head.assignIDs(-1);
+    }
     Map<String, Object> graph = new LinkedHashMap<String, Object>();
     String details = "";
     if (m_header.attribute(m_target).isNumeric()) {
