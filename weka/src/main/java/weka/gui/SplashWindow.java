@@ -126,9 +126,8 @@ public class SplashWindow extends Window {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     if (ge.getDefaultScreenDevice().isWindowTranslucencySupported(
       GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT)) {
-      // TODO this is if we are going to move to the big blue circular icon
-      // for the splash window
-      setShape(new Ellipse2D.Double(0, 0, getWidth(), getHeight()));
+      // for the splash window: cut off some pixels for better appearance
+      setShape(new Ellipse2D.Double(2, 2, getWidth() - 4, getHeight() - 4));
     }
     Dimension screenDim = Toolkit.getDefaultToolkit().getScreenSize();
     setLocation((screenDim.width - imgWidth) / 2,
