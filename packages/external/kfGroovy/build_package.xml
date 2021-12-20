@@ -23,6 +23,19 @@
   <target name="init_all">
     <!-- Create the time stamp -->
     <tstamp/>
+
+    <!-- Make fat jar containing groovy-all -->
+    <exec dir="groovy-all" executable="sh">
+      <arg line="-c 'mvn install dependency:copy-dependencies'" />
+    </exec>
+    <copy todir="${lib}" >
+      <fileset dir="groovy-all/target/dependency">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+    <exec dir="groovy-all" executable="sh">
+      <arg line="-c 'mvn clean'" />
+    </exec>
   </target>
 
    <!-- general classpath definition, incl. CLASSPATH env. variable,
@@ -57,7 +70,7 @@
       optimize="${optimization}"
       debug="${debug}"
       deprecation="${deprecation}"
-      source="1.6" target="1.6">
+      source="1.8" target="1.8">
 
       <classpath refid="project.class.path" /> 
     </javac>
@@ -120,7 +133,7 @@
             optimize="${optimization}"
             debug="${debug}"
             deprecation="${deprecation}"
-            source="1.6" target="1.6">
+            source="1.8" target="1.8">
        <classpath refid="project.class.path" /> 
      </javac>
      <copy todir="${build}/testcases" >
@@ -180,12 +193,20 @@
           todir="${dist}/${package}"/>
     <copy file="MacOSXDefaults.groovy"
           todir="${dist}/${package}"/>
-    <mkdir dir="${dist}/${package}/lib"/>
+    <!-- The Groovy .jar files need to go into the package root. -->
     <copy todir="${dist}/${package}" >
        <fileset dir="${lib}">
-         <include name="*.jar"/>
-         <include name="*.zip"/>
+         <include name="groovy-*.jar"/>
        </fileset>
+    </copy>
+    <!-- The other .jar files can (hopefully) go into the lib folder -->
+    <mkdir dir="${dist}/${package}/lib"/>
+    <copy todir="${dist}/${package}/lib" >
+      <fileset dir="${lib}">
+	<exclude name="groovy-*.jar"/>
+        <include name="*.jar"/>
+        <include name="*.zip"/>
+      </fileset>
     </copy>
     <mkdir dir="${dist}/${package}/doc"/>
     <copy todir="${dist}/${package}/doc" >
@@ -250,11 +271,12 @@
 
 <!-- Clean -->
   <target name="clean" depends="init_all"
-   description="Removes the build, dist and reports directories">
+   description="Removes the build, dist and reports directories and the lib folder">
     <!-- Delete the ${build} and ${dist} directory trees -->
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
     <delete dir="${reports}"/>
+    <delete dir="${lib}"/>
   </target>
 
   <target name="superclean" depends="clean"
