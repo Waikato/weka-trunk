@@ -24,6 +24,7 @@ package weka.gui;
 import weka.core.Environment;
 import weka.core.Settings;
 import weka.core.Utils;
+import weka.core.WekaPackageClassLoaderManager;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIDefaults;
@@ -56,6 +57,16 @@ public class LookAndFeel {
   protected static Properties LOOKANDFEEL_PROPERTIES;
 
   static {
+    try {
+      WekaPackageClassLoaderManager.forName("com.formdev.flatlaf.FlatLightLaf");
+      UIManager.installLookAndFeel("Flat Light", "com.formdev.flatlaf.FlatLightLaf");
+      UIManager.installLookAndFeel("Flat Dark", "com.formdev.flatlaf.FlatDarkLaf");
+      UIManager.installLookAndFeel("Flat IntelliJ", "com.formdev.flatlaf.FlatIntelliJLaf");
+      UIManager.installLookAndFeel("Flat Darcula", "com.formdev.flatlaf.FlatDarculaLaf.class.getName()");
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(null,
+              "LookAndFeel: failed to install FlatLaf.", "LookAndFeel", JOptionPane.ERROR_MESSAGE);
+    }
     try {
       LOOKANDFEEL_PROPERTIES = Utils.readProperties(PROPERTY_FILE);
     } catch (Exception ex) {

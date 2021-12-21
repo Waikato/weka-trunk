@@ -1622,7 +1622,7 @@ public class GUIChooserApp extends JFrame {
 
     /** Default value for LAF */
     protected static final String LAF =
-      "javax.swing.plaf.nimbus.NimbusLookAndFeel";
+      "com.formdev.flatlaf.FlatLightLaf";
 
     private static final long serialVersionUID = -8524894440289936685L;
 
