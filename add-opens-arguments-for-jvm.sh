@@ -20,4 +20,4 @@ echo -n "--add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED "
 echo -n "--add-opens=java.base/sun.nio.ch=ALL-UNNAMED "
 
 # Extra: for Java3D/JOGL
-echo -n "--add-opens=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
+echo -n "--add-opens=java.desktop/sun.awt=ALL-UNNAMED --add-opens=java.desktop/sun.java2d=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED"
