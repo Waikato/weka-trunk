@@ -6,10 +6,10 @@
 PackageName=associationRulesVisualizer
 
 # Version (required)
-Version=1.0.3
+Version=1.0.4
 
 #Date
-Date=2016-01-11
+Date=2021-12-23
 
 # Title (required)
 Title=A visualization component for displaying association rules that uses a modified version of the Association Rules Viewer from DESS IAGL of Lille.
@@ -29,10 +29,10 @@ License=GPL 3.0
 Description=A visualization component for displaying association rules that uses a modified version of the Association Rules Viewer from DESS IAGL of Lille. Requires Java 3D to be installed.
 
 # Package URL for obtaining the package archive (required)
-PackageURL=http://prdownloads.sourceforge.net/weka/associationRulesVisualizer1.0.3.zip?download
+PackageURL=http://prdownloads.sourceforge.net/weka/associationRulesVisualizer1.0.4.zip?download
 
 # Changes in this release
-Changes=Fixed a refresh bug that prevented switching back to the rules selection tab from the 3D viewer. Now depends on scatterPlot3D (which includes all the necessary Java3D libs).
+Changes=No longer depends on scatterPlot3D.
 
 # URL for further information
 URL=http://www2.lifl.fr/~jourdan/download/arv.html
@@ -41,7 +41,8 @@ URL=http://www2.lifl.fr/~jourdan/download/arv.html
 Related=scatterPlot3D
 
 # Dependencies
-Depends=weka (>=3.7.4), scatterPlot3D (>= 1.0.6)
+Depends=weka (>=3.7.4)
 
-# Special instructions to be displayed on installation of this package
-MessageToDisplayOnInstallation=
+# Included library files are from
+# https://github.com/hharrison/java3d-core/releases/tag/1.6.2
+# https://jogamp.org/deployment/v2.4.0-rc-20200307/fat/jogamp-fat.jar

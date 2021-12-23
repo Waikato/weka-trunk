@@ -6,10 +6,10 @@
 PackageName=scatterPlot3D
 
 # Version (required)
-Version=1.0.7
+Version=1.0.8
 
 #Date
-Date=2016-12-09
+Date=2021-12-23
 
 # Title (required)
 Title=A visualization component for displaying a 3D scatter plot of the data using Java 3D.
@@ -28,10 +28,10 @@ License=GPL 3.0
 # Description (required)
 Description=A visualization component for displaying a 3D scatter plot of the data using Java 3D.
 
-Changes=This version includes the latest Java3D classes and native libraries (32 and 64 bit) for Windows, Linux and Mac OSX. No special installation is required as the Java3D system loads the correct native library automatically. Users of Oracle Java 1.7 under Mac OSX should read the "MessageToDisplayOnInstallation" entry. More information about the updated version of Java3D used in this package can be found at http://gouessej.wordpress.com/2012/08/01/java-3d-est-de-retour-java-3d-is-back and http://jogamp.org/wiki/index.php/Downloading_and_installing_JOGL.
+Changes=Updated to latest java3d and jogamp-fat.jar.
 
 # Package URL for obtaining the package archive (required)
-PackageURL=http://prdownloads.sourceforge.net/weka/scatterPlot3D1.0.7.zip?download
+PackageURL=http://prdownloads.sourceforge.net/weka/scatterPlot3D1.0.8.zip?download
 
 # URL for further information
 URL=http://weka.sourceforge.net/doc.packages/scatterPlot3D
@@ -42,15 +42,6 @@ URL=http://weka.sourceforge.net/doc.packages/scatterPlot3D
 # Dependencies
 Depends=weka (>=3.8.0)
 
-# Special instructions to be displayed on installation of this package
-MessageToDisplayOnInstallation=This package includes Java3D classes and native\n\
- 32 and 64 bit libraries for Windows, Linux and Mac OSX. No special installation is\n\
- required and the correct native libraries should be loaded automatically. The only\n\
- exception to this is Mac OSX when using Oracle Java 1.7 - in this case, if Apple's\n\
- Java 1.6 JVM is (or has been) installed, there will be an old version of Java3D\n\
- jar files and native libraries in /System/Java/Extensions. These will need to be\n\
- removed or they will interfere with the new version included in this package.\n\
- Note that, as of writing, there is a positioning bug when running under Oracle\n\
- Java 1.7 under Mac OSX. This results in the display being offset slightly in the\n\
- Window. It can be rectified (temporarily) by resizing the Explorer/Knowledge Flow\n\
- Window.
+# Included library files are from
+# https://github.com/hharrison/java3d-core/releases/tag/1.6.2
+# https://jogamp.org/deployment/v2.4.0-rc-20200307/fat/jogamp-fat.jar
