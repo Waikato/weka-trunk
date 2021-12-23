@@ -24,7 +24,7 @@
     <!-- Create the time stamp -->
     <tstamp/>
 
-    <!-- Make fat jar containing groovy-all -->
+    <!-- Grab jar files for groovy-all -->
     <exec dir="groovy-all" executable="sh">
       <arg line="-c 'mvn install dependency:copy-dependencies'" />
     </exec>
