@@ -432,7 +432,7 @@
       fork="yes"
       destdir="${temp}/nsis"
       includeantruntime="false"
-      source="1.6" target="1.6">
+      source="1.8" target="1.8">
       <include name="GenerateSetup.java"/>
     </javac>
 
@@ -440,7 +440,7 @@
       fork="yes"
       destdir="${temp}/nsis/templates"
       includeantruntime="false"
-      source="1.6" target="1.6">
+      source="1.8" target="1.8">
       <include name="RunWeka.java"/>
     </javac>
 

@@ -57,7 +57,7 @@
       optimize="${optimization}"
       debug="${debug}"
       deprecation="${deprecation}"
-      source="1.6" target="1.6">
+      source="1.8" target="1.8">
 
       <classpath refid="project.class.path" /> 
     </javac>
@@ -124,7 +124,7 @@
             optimize="${optimization}"
             debug="${debug}"
             deprecation="${deprecation}"
-            source="1.6" target="1.6">
+            source="1.8" target="1.8">
        <classpath refid="project.class.path" /> 
      </javac>
      <copy todir="${build}/testcases" >
