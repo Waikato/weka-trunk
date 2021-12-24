@@ -143,7 +143,7 @@ public class GUIChooserApp extends JFrame {
   /** The weka image */
   Image m_weka = Toolkit.getDefaultToolkit().getImage(
     GUIChooserApp.class.getClassLoader().getResource(
-      "weka/gui/images/weka_background.gif"));
+      "weka/gui/images/weka_background_new.png"));
 
   /** filechooser for the TreeVisualizer */
   protected WekaFileChooser m_FileChooserTreeVisualizer = new WekaFileChooser(
