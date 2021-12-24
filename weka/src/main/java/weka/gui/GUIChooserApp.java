@@ -283,6 +283,9 @@ public class GUIChooserApp extends JFrame {
     wekaPan.setToolTipText("Weka, a native bird of New Zealand");
     ImageIcon wii = new ImageIcon(m_weka);
     JLabel wekaLab = new JLabel(wii);
+    wekaLab.setToolTipText("Western Weka, Gallirallus australis australis, "
+      + "collected 16 April 1987, Addison's Flat, Westport, New Zealand. "
+      + "Field collection 1978 - 2004. CC BY 4.0. Te Papa");
     wekaPan.add(wekaLab, BorderLayout.CENTER);
     String infoString =
       "<html>" + "<font size=-2>"
