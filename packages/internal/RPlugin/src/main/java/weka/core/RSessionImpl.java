@@ -524,8 +524,12 @@ public class RSessionImpl implements RSessionAPI, REngineCallbacks,
     String text = "Please wait while R package " + libraryName + " is being installed.";
     System.err.println(text);
     if (!GraphicsEnvironment.isHeadless() && System.getProperty("weka.started.via.GUIChooser").equals("true")) {
-        frame = new javax.swing.JFrame("RPlugin Notification: " + text);
-        frame.setPreferredSize(new java.awt.Dimension(800, 0));
+        frame = new javax.swing.JFrame("RPlugin Notification");
+        javax.swing.JPanel panel = new javax.swing.JPanel();
+        javax.swing.JLabel label = new javax.swing.JLabel(text);
+        panel.add(label);
+        frame.add(panel);
+        frame.setPreferredSize(new java.awt.Dimension(800, 100));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
