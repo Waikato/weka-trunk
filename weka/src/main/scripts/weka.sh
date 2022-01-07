@@ -21,7 +21,8 @@
 #   Copyright (C) 2011-2019 University of Waikato, Hamilton, NZ
 
 #   Shell script for starting Weka under a *nix system. Assumes that there
-#   is a JRE in jre/* under the same directory that contains this script.
+#   is a JRE in jre/* under the same directory that contains this script unless
+#   the -jvm option is used to specify the location of the java executable to use.
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 CLASSPATH="$DIR/weka.jar"
@@ -43,7 +44,7 @@ HEADLESS=
 WHITESPACE="[[:space:]]"
 for ARG in "$@"
 do
-  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-no-gui" ]
+  if [ "$ARG" = "-memory" ] || [ "$ARG" = "-main" ] || [ "$ARG" = "-no-gui" ] || [ "$ARG" = "-jvm" ]
   then
   	OPTION=$ARG
   	continue
@@ -62,6 +63,11 @@ do
   elif [ "$OPTION" = "-no-gui" ]
   then
     HEADLESS="-Djava.awt.headless=true"
+    OPTION=""
+    continue
+  elif [ "$OPTION" = "-jvm" ]
+  then
+    JCMD=$ARG
     OPTION=""
     continue
   fi
