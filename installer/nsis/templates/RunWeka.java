@@ -81,7 +81,7 @@ public class RunWeka {
 
   /**
    * returns the value of the given option from the option array, the default
-   * string if not found.
+   * string if not found. Options after a double-hyphen are ignored.
    *
    * @param option   the option to look for
    * @param options  the options array
@@ -97,6 +97,9 @@ public class RunWeka {
     result = defValue;
 
     for (i = 0; i < options.length; i++) {
+      if (options[i].equals("--")) {
+        break; // Further arguments are not for RunWeka.
+      }
       if (options[i].equals(option)) {
         if (i < options.length - 1) {
           result = options[i + 1];
@@ -111,7 +114,20 @@ public class RunWeka {
   }
 
   /**
-   * returns true if the flag was found in the options.
+   * Replace first double-hyphen with an empty string if there is at least one double-hyphen.
+   */
+  protected static void replaceDoubleHyphen(String[] options) {
+
+    for (int i = 0; i < options.length; i++) {
+      if (options[i].equals("--")) {
+        options[i] = "";
+        return;
+      }
+    }
+  }
+
+  /**
+   * returns true if the flag was found in the options. Options after a double-hyphen are ignored.
    *
    * @param option  the flag to look for
    * @param options the options array
@@ -124,6 +140,9 @@ public class RunWeka {
     result = false;
 
     for (i = 0; i < options.length; i++) {
+      if (options[i].equals("--")) {
+        break; // Further arguments are not for RunWeka.
+      }
       if (options[i].equals(option)) {
         result = true;
         options[i] = "";
@@ -214,6 +233,9 @@ public class RunWeka {
     if (jrePath.length() == 0) {
       throw new Exception("Must have a path to the embedded JRE");
     }
+
+    // Finished processing options for RunWeka: remove first double-hyphen separator if there is one.
+    replaceDoubleHyphen(args);
 
     if (debug)
       System.out.println("inifile: " + inifile);
