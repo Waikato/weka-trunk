@@ -709,7 +709,7 @@
         <include name="javax/**/*"/>
       </patternset>
     </unzip>
-    <unzip src="${lib}/flatlaf-2.0-rc1.jar" dest="${build}/classes">
+    <unzip src="${lib}/flatlaf-2.0.jar" dest="${build}/classes">
       <patternset>
         <include name="com/**/*"/>
       </patternset>
