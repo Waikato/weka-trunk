@@ -258,6 +258,7 @@
     </exec>
     <!-- Irritatingly, jpackage adds the specified version number on to the app name when making the dmg -->
     <move file="${temp}/weka-${version}-${version}.dmg" tofile="${dist}/weka-${release}-${jvm-vendor}-osx.dmg"/>
+    <delete dir="${temp}"/>
   </target>
 
   <target name="osx_jpackage_aarch64" depends="installer_init" description="Make an OS X application(s).  Run with -Drelease=&lt;number of release (eg. 3-4-1)&gt;, -Dversion=&lt;number of release (eg. 3.4.1)&gt;, the name of the JVM vendor (e.g. -Djvm-vendor=azul-zulu), and the path to an OSX aarch64 JDK (NOT JRE!!) (e.g. -Djdk-osx-aarch64=path-to-azul-jdk-aarch64-install/zulu-x.jdk). This target must be run after one of the release_base_* targets.">
@@ -298,6 +299,7 @@
     </exec>
     <!-- Irritatingly, jpackage adds the specified version number on to the app name when making the dmg -->
     <move file="${temp}/weka-${version}-${version}.dmg" tofile="${dist}/weka-${release}-${jvm-vendor}-arm-osx.dmg"/>
+    <delete dir="${temp}"/>
   </target>
 
   <target name="dmg_osx">
@@ -366,7 +368,7 @@
   </target>
 
   <target name="linux_archive" depends="installer_init">
-    <delete dir="${temp}/jre"/>
+    <delete dir="${temp}/weka-${release}/jre"/>
     <delete dir="${temp}/nsis"/>
     <mkdir dir="${temp}/weka-${release}/jre"/>
     <untar src="${jre-linux}" dest="${temp}/weka-${release}/jre" compression="gzip"/>
