@@ -28,7 +28,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 CLASSPATH="$DIR/weka.jar"
 
 # On Linux, the JVM is in a folder called jre, otherwise assume we are on a Mac.
-if [ -f "$DIR/jre" ]
+if [ -d "$DIR/jre" ]
 then
   JCMD="$DIR/jre/*/bin/java"
 else
