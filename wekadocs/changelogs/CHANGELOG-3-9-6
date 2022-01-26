@@ -1,0 +1,104 @@
+------------------------------------------------------------------------
+r15743 | mhall | 2020-12-23 10:42:26 +1300 (Wed, 23 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceClusterDefinition.java
+
+Fixed a bug where if no -A, -G or -U was specified in the option string, then the default attribute index range would be overwritten with empty string
+------------------------------------------------------------------------
+r15747 | eibe | 2020-12-23 12:45:02 +1300 (Wed, 23 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/datagenerators/clusterers/SubspaceCluster.java
+
+SubspaceCluster now runs at the command-line even when the user does not explicitly provide a cluster definition, to be consistent with the setup in the GUI.
+------------------------------------------------------------------------
+r15751 | fracpete | 2020-12-27 15:53:40 +1300 (Sun, 27 Dec 2020) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/evaluation/CostCurve.java
+   M /trunk/weka/src/main/java/weka/classifiers/evaluation/MarginCurve.java
+   M /trunk/weka/src/main/java/weka/classifiers/evaluation/ThresholdCurve.java
+
+removed main method (only used for testing) to clean up dependencies
+------------------------------------------------------------------------
+r15755 | fracpete | 2021-01-02 14:21:59 +1300 (Sat, 02 Jan 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/AttributeSummaryPanel.java
+
+date attributes now display dates instead of milliseconds using the attribute's format for min/max/mean/stdev
+------------------------------------------------------------------------
+r15791 | eibe | 2021-06-06 18:32:21 +1200 (Sun, 06 Jun 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/filters/MultiFilter.java
+   M /trunk/weka/src/test/resources/wekarefs/weka/filters/MultiFilterTest.ref
+
+MultiFilter now implements Randomizable. The seed that is specified is passed through the filters included in the list specified by the user. If no filter is Randomizable, there will be no effect. Now, MultiFilter also checks that at least one of the specified filters can handle instance or attribute weights if the data has unequal attribute or instance weights respectively. Otherwise, an exception will be thrown.
+------------------------------------------------------------------------
+r15799 | eibe | 2021-06-08 18:28:05 +1200 (Tue, 08 Jun 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/meta/Bagging.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RandomCommittee.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RandomSubSpace.java
+
+Now, Bagging, RandomCommittee, and RandomSubSpace implement efficient batch prediction if the base learner supports it (e.g., MLRClassifier).
+------------------------------------------------------------------------
+r15800 | eibe | 2021-06-08 20:02:47 +1200 (Tue, 08 Jun 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/classifiers/meta/Bagging.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RandomCommittee.java
+   M /trunk/weka/src/main/java/weka/classifiers/meta/RandomSubSpace.java
+
+Now, Bagging, RandomCommittee, and RandomSubSpace implement multi-threaded batch prediction if base learner supports batch prediction (e.g., MLRClassifier). Normal single-instance prediction is still single-threaded.
+------------------------------------------------------------------------
+r15878 | eibe | 2021-12-21 12:24:59 +1300 (Tue, 21 Dec 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/SplashWindow.java
+
+Small change to improve appearance of splash window.
+------------------------------------------------------------------------
+r15879 | eibe | 2021-12-21 17:17:48 +1300 (Tue, 21 Dec 2021) | 1 line
+Changed paths:
+   M /trunk/weka/build.xml
+   M /trunk/weka/lib/README
+   A /trunk/weka/lib/flatlaf-2.0-rc1.jar
+   M /trunk/weka/pom.xml
+   M /trunk/weka/src/main/java/weka/classifiers/functions/MultilayerPerceptron.java
+   M /trunk/weka/src/main/java/weka/gui/GUIChooserApp.java
+   M /trunk/weka/src/main/java/weka/gui/LookAndFeel.java
+   M /trunk/weka/src/main/java/weka/gui/SplashWindow.java
+   M /trunk/weka/src/main/java/weka/gui/WorkbenchDefaults.java
+   M /trunk/weka/src/main/java/weka/knowledgeflow/KFDefaults.java
+
+Added FlatLaf and made necessary changes to make its light version the default look-and-feel in WEKA. Also, added dialog with error message when main method invoked by SplashWindow throws an exception. Finally, MultilayerPerceptron no longer tries to serialize user interface components when the MLP GUI has been used to train the classifier.
+------------------------------------------------------------------------
+r15881 | mhall | 2021-12-23 10:43:46 +1300 (Thu, 23 Dec 2021) | 1 line
+Changed paths:
+   A /trunk/weka/src/main/java/weka/gui/weka_icon_new_1024x1024.png
+
+1024x1024 version of the icon
+------------------------------------------------------------------------
+r15893 | mhall | 2021-12-24 14:11:47 +1300 (Fri, 24 Dec 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/GUIChooserApp.java
+   A /trunk/weka/src/main/java/weka/gui/images/weka_background_new.png
+
+New image for GUIChooser
+------------------------------------------------------------------------
+r15894 | mhall | 2021-12-24 14:16:37 +1300 (Fri, 24 Dec 2021) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/GUIChooserApp.java
+
+Added tooltip to new Weka image
+------------------------------------------------------------------------
+r15909 | mhall | 2022-01-11 17:11:15 +1300 (Tue, 11 Jan 2022) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/core/Copyright.props
+   M /trunk/weka/src/main/java/weka/core/version.txt
+
+Updated copyright dates and version.txt
+------------------------------------------------------------------------
+r15916 | eibe | 2022-01-14 16:15:58 +1300 (Fri, 14 Jan 2022) | 1 line
+Changed paths:
+   M /trunk/weka/src/main/java/weka/gui/LookAndFeel.java
+   M /trunk/weka/src/main/java/weka/gui/arffviewer/ArffTable.java
+
+Fixed problem which meant copy/paste to clipboard on macOS did not work with FlatLAF. Removed some old bug fix workarounds from LookAndFeel.java. Fixed ARFF editor where ALT+mouse click did not bring up context menu in cell area. The fix means double-clicking is not required to modify nominal values.
+------------------------------------------------------------------------
