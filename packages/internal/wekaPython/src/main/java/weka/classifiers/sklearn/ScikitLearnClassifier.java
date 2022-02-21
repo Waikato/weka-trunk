@@ -204,11 +204,14 @@ public class ScikitLearnClassifier extends AbstractClassifier
       "\tcopy_X=True, fit_intercept=True, max_iter=300,\n"
         + "\tmax_subpopulation=10000, n_jobs=1, n_subsamples=None,\n"
         + "\trandom_state=None, tol=0.001, verbose=False"),
-    GaussianProcess("gaussian_process", false, true, false, false,
-      "\tregr='constant', corr='squared_exponential',\n"
-        + "\tbeta0=None, storage_mode='full', verbose=False, theta0=0.1,\n "
-        + "\tthetaL=None, thetaU=None, optimizer='fmin_cobyla', random_start=1,\n "
-        + "\tnormalize=True, nugget=2.2204460492503131e-15, random_state=None"),
+    GaussianProcessRegressor("gaussian_process", false, true, false, false,
+      "\tkernel=None, alpha=1e-10,\n"
+        + "\toptimizer='fmin_l_bfgs_b', n_restarts_optimizer=0, normalize_y=False,\n "
+        + "\trandom_start=1,\n "
+        + "\tnormalize=False, random_state=None"),
+    GaussianProcessClassifier("gaussian_process", true, false, true, false,
+      "\tkernel=None, optimizer='fmin_l_bfgs_b', n_restarts_optimizer=0, normalize_y=False,\n "
+        + "\trandom_start=1, normalize=False, max_iter_predict=100, multi_class='one_vs_rest', random_state=None"),
     KernelRidge("kernel_ridge", false, true, false, false,
       "\talpha=1, coef0=1, degree=3, gamma=None, kernel='linear',\n"
         + "\tkernel_params=None"),
