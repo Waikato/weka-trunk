@@ -315,7 +315,7 @@ public class DilcaDistance implements DistanceFunction, Serializable{
     	m_Data = insts;
 		initializeAttributeIndices();
 		
-		if (!supDiscr && m_Data.classIndex() < 0)
+		if (supDiscr && m_Data.classIndex() < 0)
 			throw new RuntimeException("Trying to use Supervised Discretization over a dataset without an assigned class attribute");
 			
 		try{ 
