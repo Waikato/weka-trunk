@@ -271,6 +271,18 @@ public class ScikitLearnClassifier extends AbstractClassifier
         + "\tmax_leaf_nodes=None, min_samples_leaf=1, min_samples_split=2,\n"
         + "\tmin_weight_fraction_leaf=0.0, random_state=None,\n"
         + "\tsplitter='random'"),
+    ExtraTreesClassifier("ensemble", true, false, true, false,
+      "\tn_estimators=100, criterion='gini', max_depth=None,\n"
+        + "\tmin_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0,\n"
+        + "\tmax_features='auto', max_leaf_nodes=None, min_impurity_decrease=0.0,\n"
+        + "\tbootstrap=False, oob_score=False, n_jobs=None,\n"
+        + "\trandom_state=None, verbose=0, warm_start=False, class_weight=None,\n"),
+    ExtraTreesRegressor("ensemble", false, true, false, false,
+      "\tn_estimators=100, criterion='mse', max_depth=None,\n"
+        + "\tmin_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0,\n"
+        + "\tmax_features='auto', max_leaf_nodes=None, min_impurity_decrease=0.0,\n"
+        + "\tbootstrap=False, oob_score=False, n_jobs=None,\n"
+        + "\trandom_state=None, verbose=0, warm_start=False, class_weight=None,\n"),
     GradientBoostingClassifier("ensemble", true, false, true, false,
       "\tinit=None, learning_rate=0.1, loss='deviance',\n"
         + "\tmax_depth=3, max_features=None, max_leaf_nodes=None,\n"
@@ -1110,6 +1122,9 @@ public class ScikitLearnClassifier extends AbstractClassifier
         if (learnerMethod.equalsIgnoreCase("LDA")) {
           learnerMethod = "LinearDiscriminantAnalysis";
           learnerModule = "discriminant_analysis";
+        } else if (learnerMethod.equalsIgnoreCase("QDA")) {
+          learnerMethod = "QuadraticDiscriminantAnalysis";
+          learnerModule = "discriminant_analysis";
         }
       }
       if (m_learner == Learner.XGBClassifier
@@ -1238,6 +1253,9 @@ public class ScikitLearnClassifier extends AbstractClassifier
       if (m_scikitVersion > 0.18) {
         if (learnerMethod.equalsIgnoreCase("LDA")) {
           learnerMethod = "LinearDiscriminantAnalysis";
+          learnerModule = "discriminant_analysis";
+        } else if (learnerMethod.equalsIgnoreCase("QDA")) {
+          learnerMethod = "QuadraticDiscriminantAnalysis";
           learnerModule = "discriminant_analysis";
         }
       }
